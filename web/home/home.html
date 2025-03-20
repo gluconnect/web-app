@@ -13,7 +13,7 @@
         <button id="setThreshold" onclick="setThreshold()">Set Threshold</button>
         <h3>You currently have <span id="readingcount">0</span> reading(s)</h3>
         <button id="addReading" onclick="addReading()">Add Reading</button>
-        <table id="readings">
+        <table>
             <thead>
                 <tr>
                     <th>Time</th>
@@ -23,7 +23,7 @@
                     <th>Additional Comments</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="readings">
                 <!-- Readings will be populated here -->
             </tbody>
         </table>

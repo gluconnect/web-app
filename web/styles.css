@@ -45,7 +45,39 @@ table{
     width: 100%;
     border-collapse: collapse;
 }
-#highreading{
+.highreading{
     color: red;
     font-weight: bold;
+}
+.form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.cancel{
+    background-color: lightcoral;
+    color: white;
+    border: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+label{
+    font-weight: bold;
+    font-size: 30px;
+}
+input{
+    width: 30%;
+    padding: 10px;
+    height: 60px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 30px;
+}
+button[type="submit"]{
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
 }
