@@ -1,0 +1,32 @@
+var data = {
+};
+let frame = document.getElementById("content");
+function go(page){
+    frame.src = page+"/"+page+".html";
+}
+async function loadEverything(){
+    data.threshold = await (await fetch("/get_threshold",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
+    })).text();
+    data.readings = await (await fetch("/get_readings",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
+    })).json();
+    data.readings = data.readings.reverse(); // Reverse the readings to show the most recent first
+}
+window.onmessage = async function(event) {
+    if (Object.hasOwn(event.data, 'email')){
+        data.creds = event.data;
+        data.name = event.data.name;
+        await loadEverything();
+        go("home");
+        frame.onload = ()=>{frame.contentWindow.postMessage(data, "*");}
+    }
+}

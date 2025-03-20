@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "express-session": "npm:express-session@^1.18.1"
+  }
+}
