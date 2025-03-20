@@ -46,6 +46,48 @@ function setThreshold(){
     }
     document.getElementById("content").style.display = "none"; // Hide the main content while the form is open
 }
+function addReading(){
+    //create a form popup to add a reading
+    let form = document.createElement("form");
+    form.setAttribute("id", "readingform");
+    form.setAttribute("onsubmit", "return false;");
+    form.innerHTML = `
+        <h2>Add a Reading</h2>
+        <label for="time">Time:</label>
+        <input type="datetime-local" id="time" name="time" value="${new Date().toISOString().slice(0, 16)}" required>
+        <label for="meal">Meal:</label>
+        <select id="meal" name="meal" required>
+            <option value="Before Meal">Before Meal</option>
+            <option value="After Meal">After Meal</option>
+        </select>
+        <label for="value">Value:</label>
+        <input type="number" id="value" name="value" required>
+        <label for="method">Method:</label>
+        <input type="text" id="method" name="method" value="blood sample" required>
+        <label for="comment">Comments:</label>
+        <input type="text" id="comment" name="comment">
+        <button type="submit" id="submitreadingform">Add Reading</button><button id="cancelreadingform" class="cancel">Cancel</button>
+    `;
+    form.classList.add("form");
+    document.body.appendChild(form);
+    form.onsubmit = function() {
+        let newReading = {
+            meal: document.getElementById("meal").value,
+            value: parseInt(document.getElementById("value").value),
+            measure_method: document.getElementById("method").value,
+            comment: document.getElementById("comment").value,
+            time: new Date().toISOString()
+        };
+        window.parent.postMessage({newReading: newReading}, "*");
+        document.body.removeChild(form);
+        document.getElementById("content").style.display = "flex"; // Show the main content again
+    };
+    document.getElementById("cancelreadingform").onclick = function() {
+        document.body.removeChild(form);
+        document.getElementById("content").style.display = "flex"; // Show the main content again
+    }
+    document.getElementById("content").style.display = "none"; // Hide the main content while the form is open
+}
 function loadData() {
     document.getElementById("username").innerHTML = data.name;
     if(data.threshold<0){

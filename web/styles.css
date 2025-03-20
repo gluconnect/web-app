@@ -67,7 +67,7 @@ label{
     font-weight: bold;
     font-size: 30px;
 }
-input{
+input, select{
     width: 30%;
     padding: 10px;
     height: 60px;

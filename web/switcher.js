@@ -42,5 +42,19 @@ window.onmessage = async function(event) {
         }else{
             frame.contentWindow.postMessage({error: "Failed to set threshold"}, "*"); // Notify the frame of the error
         }
+    }else if(Object.hasOwn(event.data, 'newReading')){
+        let res = await fetch("/add_reading",{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, newReading: event.data.newReading })
+        });
+        if(res.status === 200){
+            data.readings.unshift(event.data.newReading); // Add the new reading to the front of the list
+            frame.contentWindow.postMessage(data, "*");
+        }else{
+            frame.contentWindow.postMessage({error: "Failed to add reading"}, "*"); // Notify the frame of the error
+        }
     }
 }
