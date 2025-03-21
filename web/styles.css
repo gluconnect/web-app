@@ -9,7 +9,7 @@ footer {
     left: 0;
     right: 0;
 }
-button {
+footer button {
     flex-grow: 1;
 }
 iframe {
@@ -24,6 +24,7 @@ button {
     border: none;
     font-size: 16px;
     cursor: pointer;
+    flex-grow: 0;
 }
 button:hover {
     background-color: #ddd;
@@ -33,6 +34,14 @@ button:hover {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    overflow: auto;
+}
+#contentFrame{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 90%;
 }
 th{
     width: 20%;
@@ -43,6 +52,7 @@ thead{
 }
 table{
     width: 100%;
+    height: 100%;
     border-collapse: collapse;
 }
 .highreading{
@@ -84,4 +94,28 @@ button[type="submit"]{
     border: none;
     font-size: 30px;
     cursor: pointer;
+}
+.microform{
+    background-color: limegreen;
+    padding: 5px;
+    margin: 5px;
+}
+.subpanel{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    overflow: auto;
+    width: 100%;
+}
+ul{
+    width: 30%;
+    margin: 0;
+    padding: 0;
+}
+p{
+    margin: 5px;
+}
+body{
+    margin: 0;
 }

@@ -1,6 +1,6 @@
 var data = {
 };
-let frame = document.getElementById("content");
+let frame = document.getElementById("contentFrame");
 function go(page){
     frame.src = page+"/"+page+".html";
     if(page==="login"){
@@ -25,6 +25,21 @@ async function loadEverything(){
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
     })).json();
     data.readings = data.readings.reverse(); // Reverse the readings to show the most recent first
+    data.viewers = await (await fetch("/get_viewers",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
+    })).json();
+    data.patients = await (await fetch("/get_patients",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
+    })).json();
+    //Note: patents and viewers are each an array of objects {name, email}
 }
 window.onmessage = async function(event) {
     if (Object.hasOwn(event.data, 'email')){ // login
@@ -124,6 +139,48 @@ window.onmessage = async function(event) {
             data.creds.pass = event.data.changePassword; // Update the password in the data object
             frame.contentWindow.postMessage(data, "*"); // Notify the frame of the change
             frame.contentWindow.postMessage({success: "Password changed successfully"}, "*"); // Notify the frame of the success
+        }
+    }else if(Object.hasOwn(event.data, "addViewer")){ // add viewer
+        let res = await fetch("/connect_user",{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, uemail: event.data.addViewer })
+        });
+        if(res.status === 200){
+            data.viewers.push(await res.json()); // Add the new viewer to the list
+            frame.contentWindow.postMessage(data, "*");
+        }else{
+            frame.contentWindow.postMessage({error: "Failed to add viewer"}, "*"); // Notify the frame of the error
+        }
+    }else if(Object.hasOwn(event.data, "removeViewer")){ // remove viewer
+        let res = await fetch("/disconnect_user",{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, uemail: event.data.removeViewer })
+        });
+        if(res.status === 200){
+            data.viewers = data.viewers.filter(viewer => viewer.email !== event.data.removeViewer); // Remove the viewer from the list
+            frame.contentWindow.postMessage(data, "*");
+        }else{
+            frame.contentWindow.postMessage({error: "Failed to remove viewer"}, "*"); // Notify the frame of the error
+        }
+    }else if(Object.hasOwn(event.data, "removePatient")){ // remove patient
+        let res = await fetch("/disconnect_patient",{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, uemail: event.data.removePatient })
+        });
+        if(res.status === 200){
+            data.patients = data.patients.filter(patient => patient.email !== event.data.removePatient); // Remove the patient from the list
+            frame.contentWindow.postMessage(data, "*");
+        }else{
+            frame.contentWindow.postMessage({error: "Failed to remove patient"}, "*"); // Notify the frame of the error
         }
     }
 }

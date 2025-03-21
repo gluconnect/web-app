@@ -11,19 +11,19 @@
         <h3>Current Name: <span id="currentName"></span></h3>
         <h3>Current Email: <span id="currentEmail"></span></h3>
         <button id="changeName" onclick="changeName()">Change Name</button>
-        <div id="nameInput" style="display: none;">
+        <div id="nameInput" style="display: none;" class="microform">
             <input type="text" id="newName" placeholder="Enter new name">
             <button onclick="submitName()">Submit</button>
             <button onclick="cancelName()">Cancel</button>
         </div>
         <!--<button id="changeEmail" onclick="changeEmail()">Change Email</button>-->
-        <div id="emailInput" style="display: none;">
+        <div id="emailInput" style="display: none;" class="microform">
             <input type="email" id="newEmail" placeholder="Enter new email">
             <button onclick="submitEmail()">Submit</button>
             <button onclick="cancelEmail()">Cancel</button>
         </div>
         <button id="changePassword" onclick="changePassword()">Change Password</button>
-        <div id="passwordInput" style="display: none;">
+        <div id="passwordInput" style="display: none;" class="microform">
             <div style="display: flex; flex-direction: column;">
                 <input type="password" id="currentPassword" placeholder="Enter current password">
                 <input type="password" id="newPassword" placeholder="Enter new password">
@@ -34,7 +34,7 @@
         </div>
         <button id="logout" onclick="logout()">Logout</button>
         <button id="deleteAccount" onclick="deleteAccount()">Delete Account</button>
-        <div id="deleteConfirmation" style="display: none;">
+        <div id="deleteConfirmation" style="display: none;" class="microform">
             <p class="warning">Are you sure you want to delete your account? This action is irreversible</p>
             <input type="password" id="deletePassword" placeholder="Enter your password to confirm">
             <button class="warning" onclick="confirmDelete()">Confirm</button>

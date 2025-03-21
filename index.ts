@@ -91,7 +91,7 @@ type User = {
   name: string;
   id: string;
   password: string;
-  viewers: Array<{ email: string; threshold: number }>;
+  viewers: Array<{ email: string }>;
   patients: Array<{ email: string }>;
   threshold: number;
   readings: Array<GlucoReading>;
@@ -537,10 +537,10 @@ app.post("/connect_user", checkLogin, (req, res) => {
     res.sendStatus(403); //user is already connected to prey
     return;
   }
-  user.viewers.push({ email: prey.id, threshold: prey.threshold });
+  user.viewers.push({ email: prey.id });
   prey.patients.push({ email: user.id });
   console.log("User connected: ", user.id, " to ", prey.id);
-  res.sendStatus(200);
+  res.status(200).json({email: prey.id, name: prey.name});
 });
 app.post("/disconnect_user", checkLogin, (req, res) => {
   let user = verifyUser(req);
@@ -570,8 +570,8 @@ app.post("/disconnect_patient", checkLogin, (req, res) => {
     return;
   }
   console.log("User disconnected: ", user.id, " from ", prey.id);
-  user.viewers = user.viewers.filter((val) => val.email !== prey.id);
-  prey.patients = prey.patients.filter((val) => val.email !== user.id);
+  user.patients = user.patients.filter((val) => val.email !== prey.id);
+  prey.viewers = prey.viewers.filter((val) => val.email !== user.id);
   res.sendStatus(200);
 });
 /*app.use('/welcome', (err, req, res, next)=>{
