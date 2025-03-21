@@ -104,18 +104,22 @@ type GlucoReading = {
   measure_method: "blood sample";
   extra_data: Map<string, any>;
 };
+
 //returns a GlucoReading object from the request body
 function toReading(x): GlucoReading {
   let glooc: GlucoReading = {
     time: new Date(x.time),
-    value: x.value,
-    meal: x.meal,
-    comment: x.comment,
-    measure_method: x.measure_method,
+    value: x.value||-1, // -1 will flag error
+    meal: x.meal||"N/A",
+    comment: x.comment||"",
+    measure_method: x.measure_method||"N/A",
     extra_data: new Map(),
   };
+  if(glooc.value<0)throw new Error("Invalid value");
+  if (glooc.time.toString() === "Invalid Date")throw new Error("Invalid time");
   return glooc;
 }
+
 //returns a JSON object from a GlucoReading object
 function serializeReading(x: GlucoReading) {
   let glooc = {
@@ -250,7 +254,6 @@ app.post("/verify", (req, res) => {
 */
 app.post("/add_reading", checkLogin, (req, res) => {
   if (!req.body) {
-    //TODO: VALIDATE BODY
     res.sendStatus(400);
   } else {
     let user = verifyUser(req);
@@ -260,7 +263,7 @@ app.post("/add_reading", checkLogin, (req, res) => {
     }
     let reading;
     try {
-      reading = toReading(req.body);
+      reading = toReading(req.body.reading);
     } catch (e) {
       res.sendStatus(400);
       return;

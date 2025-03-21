@@ -24,5 +24,10 @@ async function login(e){
         errors.innerHTML = "Invalid username or password. Please try again.";
     }
 }
+window.onmessage = function(event) {
+    if(event.data && event.data.error){
+        document.getElementById("errorMessage").innerHTML = event.data.error; // Display error message
+    }
+}
 // Add event listener to the form submission
 document.getElementById("loginForm").addEventListener("submit", login);

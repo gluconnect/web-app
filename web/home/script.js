@@ -19,14 +19,14 @@ function setThreshold(){
     form.setAttribute("onsubmit", "return false;");
     form.innerHTML = `
         <label for="threshold">Set your threshold:</label>
-        <input type="number" id="thresholdinput" name="threshold" min="-1" required>
+        <input type="number" id="thresholdinput" name="threshold" min="-1" step="any" required>
         <button type="submit" id="submitthresholdform">Set</button><button id="cancelthresholdform" class="cancel">Cancel</button><button id="removethreshold">Remove Threshold</button>
     `;
     form.classList.add("form");
     document.body.appendChild(form);
     document.getElementById("thresholdinput").value = data.threshold;
     form.onsubmit = function() {
-        let newThreshold = parseInt(document.getElementById("thresholdinput").value);
+        let newThreshold = parseFloat(document.getElementById("thresholdinput").value);
         if(newThreshold >= -1){
             window.parent.postMessage({setThreshold: newThreshold}, "*");
         }else{
@@ -107,5 +107,7 @@ window.onmessage = function(event) {
     if (event.data && Object.hasOwn(event.data, 'creds')) {
         data = event.data;
         loadData();
+    }else if(event.data && event.data.error){
+        document.getElementById("errorMessage").innerHTML = event.data.error; // Display error message
     }
 }

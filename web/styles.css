@@ -49,6 +49,10 @@ table{
     color: red;
     font-weight: bold;
 }
+.warning{
+    color: red;
+    font-weight: bold;
+}
 .form{
     display: flex;
     flex-direction: column;
@@ -67,7 +71,7 @@ label{
     font-weight: bold;
     font-size: 30px;
 }
-input, select{
+form input, select{
     width: 30%;
     padding: 10px;
     height: 60px;
