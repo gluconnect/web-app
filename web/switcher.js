@@ -1,9 +1,11 @@
 var data = {
 };
+var spectate = {
+};
 let frame = document.getElementById("contentFrame");
 function go(page){
     frame.src = page+"/"+page+".html";
-    if(page==="login"){
+    if(page==="login"||page==="register"||page==="spectate"){ // Check if the page is login or register
         document.getElementById("nav").style.display = "none"; // Hide the navigation bar on the login page
     }else{
         document.getElementById("nav").style.display = "flex"; // Show the navigation bar on other pages
@@ -40,6 +42,23 @@ async function loadEverything(){
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
     })).json();
     //Note: patents and viewers are each an array of objects {name, email}
+}
+async function loadSpectate(){
+    spectate.threshold = parseFloat(await (await fetch("/spectate_threshold",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, uemail: spectate.email })
+    })).text());
+    spectate.readings = await (await fetch("/spectate_readings",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, uemail: spectate.email })
+    })).json();
+    spectate.readings = spectate.readings.reverse(); // Reverse the readings to show the most recent first
 }
 window.onmessage = async function(event) {
     if (Object.hasOwn(event.data, 'email')){ // login
@@ -182,6 +201,16 @@ window.onmessage = async function(event) {
         }else{
             frame.contentWindow.postMessage({error: "Failed to remove patient"}, "*"); // Notify the frame of the error
         }
+    }else if(Object.hasOwn(event.data, "spectate")){
+        spectate.email = event.data.spectate;
+        spectate.name = event.data.spectateName;
+        await loadSpectate();
+        go("spectate");
+        frame.onload = ()=>{frame.contentWindow.postMessage(spectate, "*");}
+    }else if(event.data === "stopSpectating"){ // stop spectating
+        spectate = {};
+        go("users");
+        frame.onload = ()=>{frame.contentWindow.postMessage(data, "*");} // Notify the frame of the change
     }
 }
 go("login"); // Start with the login page

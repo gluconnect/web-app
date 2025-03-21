@@ -1,4 +1,11 @@
 let data = {};
+function initializeToggles(){
+    // Initialize the toggles for viewers and patients
+    document.getElementById("viewers").style.display = "flex"; // Hide viewers by default
+    document.getElementById("patients").style.display = "flex"; // Hide patients by default
+    document.getElementById("collapseViewers").style.display = "none"; // Show collapse button for viewers
+    document.getElementById("collapsePatients").style.display = "none"; // Show collapse button for patients
+}
 function toggleViewers() {
     let viewers = document.getElementById("viewers");
     let show = document.getElementById("collapseViewers");
@@ -21,6 +28,9 @@ function togglePatients() {
         show.style.display = "block";
     }
 }
+function spectate(email, name) {
+    window.parent.postMessage({ spectate: email, spectateName: name }, "*"); // Send message to parent to spectate the patient
+}
 function removeViewer(email) {
     window.parent.postMessage({ removeViewer: email }, "*"); // Send message to parent to remove viewer
 }
@@ -41,6 +51,25 @@ function appendViewer(viewer) {
     viewerElement.style.width = "100%";
     document.getElementById("viewerList").appendChild(viewerElement);
 }
+function addPatient(patient) {
+    // create a new patient element
+    let patientElement = document.createElement("li");
+    patientElement.innerHTML = `
+        <span style="font-weight: bold;">${patient.name} <span style="font-weight: normal;">(${patient.email})</span></span>
+        <div>
+            <button onclick="spectate('${patient.email}','${patient.name}')">View</button>
+            <button class="remove" onclick="removePatient('${patient.email}')">Remove</button>
+        </div>
+    `;
+    patientElement.style.display = "flex";
+    patientElement.style.justifyContent = "space-between";
+    patientElement.style.alignItems = "center";
+    patientElement.style.flexDirection = "row";
+    patientElement.style.width = "100%";
+    document.getElementById("patientList").appendChild(patientElement);
+}
+// Function to add a new viewer
+// This function creates a form to add a new viewer and appends it to the viewer list
 function addViewer() {
     // create form to add a new viewer
     let form = document.createElement("form");
@@ -69,6 +98,19 @@ function loadData() {
     }else{
         document.getElementById("patientInstructions").display = "none"; // Hide instructions if there are patients
     }
+    //hide instructions for each if not empty, show otherwise
+    if(data.viewers.length > 0){
+        document.getElementById("viewerInstructions").style.display = "none";
+    }else{
+        document.getElementById("viewerInstructions").style.display = "block";
+    }
+    if(data.patients.length > 0){
+        document.getElementById("patientInstructions").style.display = "none";
+    }else{
+        document.getElementById("patientInstructions").style.display = "block";
+    }
+    // Initialize toggles for viewers and patients
+    initializeToggles();
     //Collapse one if empty but not the other
     if(data.viewers.length === 0 && data.patients.length > 0){
         toggleViewers();
@@ -82,9 +124,9 @@ function loadData() {
     });
     // Add patients
     document.getElementById("patientList").innerHTML = ""; // Clear the list before adding patients
-    /*data.patients.forEach(viewer => {
+    data.patients.forEach(viewer => {
         addPatient(viewer);
-    });*/
+    });
 }
 window.onmessage = function(event) {
     if (event.data && Object.hasOwn(event.data, 'creds')) {

@@ -6,9 +6,9 @@
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <div id="content" style="height: 100%;">
+    <div id="content" style="height: 100%; justify-content: space-evenly;">
         <button id="collapseViewers" onclick="toggleViewers()" style="left: 20px; display: none;">Show Viewers</button>
-        <div id="viewers" style="height: 50%" class="subpanel">
+        <div id="viewers" style="flex-grow:2;" class="subpanel">
             <h1>Viewers<button onclick="toggleViewers()" style="position: absolute;">^</button></h1>
             <h3>You currently have <span id="currentViewerCount">0</span> connected viewers.</h3>
             <p id="viewerInstructions">Connect a viewer to authorize them to view your glucose readings</p>
@@ -18,10 +18,11 @@
             </ul>
         </div>
         <button id="collapsePatients" onclick="togglePatients()" style="left: 20px; display: none;">Show Patients</button>
-        <div id="patients" style="height: 50%" class="subpanel">
+        <div id="patients" style="flex-grow:2;" class="subpanel">
             <h1>Patients<button onclick="togglePatients()" style="position: absolute;">^</button></h1>
             <h3>You currently have <span id="currentPatientCount">0</span> connected patients.</h3>
             <p id="patientInstructions">Patients can add you as a viewer</p>
+            <!--TODO invite patients-->
             <ul id="patientList">
                 <!-- List of available patients will be populated here -->
             </ul>

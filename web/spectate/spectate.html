@@ -1,0 +1,35 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gluconnect Web</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div id="content">
+        <h1>Viewing <span id="username"></span>'s Readings</h1>
+        <h2 id="thresholdinfo">No threshold set</h2>
+        <h1><span id="threshold"></span></h1>
+        <!--<button id="setThreshold" onclick="setThreshold()">Set Threshold</button>-->
+        <h3><span id="readingcount">0</span> reading(s)</h3>
+        <p id="errorMessage" style="color: red;"></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Meal Time</th>
+                    <th>Glucose Reading Value</th>
+                    <th>Measuring Method</th>
+                    <th>Additional Comments</th>
+                </tr>
+            </thead>
+            <tbody id="readings">
+                <!-- Readings will be populated here -->
+            </tbody>
+        </table>
+        <button id="cancel" class="cancel" onclick="window.parent.postMessage('stopSpectating', '*')">Back</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -139,6 +139,10 @@ function hash(value: string): string {
   return hash.digest("hex");
 }
 //allow clients to create user accounts. Must have email and password and email must not be duplicate.
+/*Possible response codes
+200 - user account created
+401 - user account not created (email already exists or invalid request body)
+*/
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.sendStatus(401);
@@ -435,7 +439,7 @@ app.post("/spectate_threshold", checkLogin, (req, res) => {
     res.sendStatus(401);
     return;
   }
-  res.status(200).send(u.threshold);
+  res.status(200).send(u.threshold.toString());
 });
 
 //changes name and returns the name associated with the user, if the user is logged in
@@ -519,7 +523,7 @@ app.post("/delete", (req, res) => {
 /*Possible response codes
 200 - user connected
 401 - user not logged in
-403 - user already connected to patient
+403 - user already connected to patient or user tried to connect to themselves
 404 - other user does not exist
 */
 app.post("/connect_user", checkLogin, (req, res) => {
@@ -531,6 +535,10 @@ app.post("/connect_user", checkLogin, (req, res) => {
   let prey = getUser(req.body.uemail);
   if (!prey) {
     res.sendStatus(404); //other user does not exist
+    return;
+  }
+  if(req.body.uemail === user.id) {
+    res.sendStatus(403); //user cannot connect to themselves
     return;
   }
   if (user.viewers.some((e) => e.email === prey.id)) {

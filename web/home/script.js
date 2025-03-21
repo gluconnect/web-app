@@ -24,7 +24,7 @@ function setThreshold(){
     `;
     form.classList.add("form");
     document.body.appendChild(form);
-    document.getElementById("thresholdinput").value = data.threshold;
+    if(data.threshold>=0)document.getElementById("thresholdinput").value = data.threshold;
     form.onsubmit = function() {
         let newThreshold = parseFloat(document.getElementById("thresholdinput").value);
         if(newThreshold >= -1){
