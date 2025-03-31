@@ -32,6 +32,11 @@
             </tbody>
         </table>
         <button id="cancel" class="cancel" onclick="window.parent.postMessage('stopSpectating', '*')">Back</button>
+        <div class="popup">
+            <p>Last Read: <span id="lastRead"></span></p>
+            <button onclick="toggleShowRead()" id="toggleLastRead">Hide Viewed Readings</button>
+            <button onclick="window.parent.postMessage('setLastRead', '*')">Mark Current as Read</button>
+        </div>
     </div>
 
     <script src="script.js"></script>

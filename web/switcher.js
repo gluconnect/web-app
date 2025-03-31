@@ -12,6 +12,7 @@ function go(page){
     }
 }
 async function loadEverything(){
+    data = {}; // Reset data object
     data.threshold = await (await fetch("/get_threshold",{
         method: "POST",
         headers: {
@@ -44,6 +45,7 @@ async function loadEverything(){
     //Note: patents and viewers are each an array of objects {name, email}
 }
 async function loadSpectate(){
+    spectate = {}; // Reset spectate object
     spectate.threshold = parseFloat(await (await fetch("/spectate_threshold",{
         method: "POST",
         headers: {
@@ -58,6 +60,16 @@ async function loadSpectate(){
         },
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, uemail: spectate.email })
     })).json();
+    let lastRead = await (await fetch("/spectate_last_read",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, uemail: spectate.email })
+    })).text();
+    if(lastRead!==""){
+        spectate.lastRead = lastRead; // Set the last read time if available
+    }
     spectate.readings = spectate.readings.reverse(); // Reverse the readings to show the most recent first
 }
 window.onmessage = async function(event) {
@@ -211,6 +223,22 @@ window.onmessage = async function(event) {
         spectate = {};
         go("users");
         frame.onload = ()=>{frame.contentWindow.postMessage(data, "*");} // Notify the frame of the change
+    }else if(event.data === "setLastRead"){ // delete spectate
+        let time = (new Date()).toISOString();
+        let res = await fetch("/set_patient_last_read",{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, uemail: spectate.email, lastRead: time }) // Set the last read to the current time
+        });
+        if(res.status !== 200){
+            frame.contentWindow.postMessage({error: "Failed to set last read"}, "*"); // Notify the frame of the error
+        }else{
+            frame.contentWindow.postMessage({success: "Last read set successfully"}, "*"); // Notify the frame of the success
+            spectate.lastRead = time; // Set the last read to the current time even if it fails
+            frame.contentWindow.postMessage(spectate, "*");
+        }
     }
 }
 go("login"); // Start with the login page

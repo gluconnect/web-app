@@ -92,7 +92,7 @@ type User = {
   id: string;
   password: string;
   viewers: Array<{ email: string }>;
-  patients: Array<{ email: string }>;
+  patients: Array<{ email: string, lastRead?: Date }>; // lastRead is optional and can be used to store the last reading time for the patient
   threshold: number;
   readings: Array<GlucoReading>;
 };
@@ -256,6 +256,7 @@ app.post("/verify", (req, res) => {
 400 - invalid request body
 401 - user not logged in
 */
+//TODO: add warning to all connected viewers if the reading is above the threshold
 app.post("/add_reading", checkLogin, (req, res) => {
   if (!req.body) {
     res.sendStatus(400);
@@ -283,6 +284,8 @@ app.post("/add_reading", checkLogin, (req, res) => {
     res.sendStatus(200);
   }
 });
+
+//TODO: add /update_warnings endpoint to notify viewers after a threshold change
 
 //returns all readings associated with the user, if the user is logged in
 /*Possible response codes
@@ -439,6 +442,61 @@ app.post("/spectate_threshold", checkLogin, (req, res) => {
     return;
   }
   res.status(200).send(u.threshold.toString());
+});
+
+app.post("/spectate_last_read", checkLogin, (req, res) => {
+  let user = verifyUser(req);
+  if (!user) {
+    res.sendStatus(401);
+    return;
+  }
+  let u = verifyPatient(req);
+  if (!u) {
+    if (verifyUser(req)) {
+      //user is logged in but not authorized to view patient
+      res.sendStatus(403);
+      return;
+    }
+    res.sendStatus(401);
+    return;
+  }
+  let up = user.patients.find((p) => p.email === u.id)!;
+  res.status(200).send(up.lastRead ? up.lastRead.toISOString() : ""); //return last reading time if it exists, otherwise return null);
+});
+
+//sets the last reading time for the patient specified by the email in the request body, if the user is logged in and has authorized the patient
+/*Possible response codes
+200 - last reading time set
+401 - user not logged in
+403 - user not authorized to view patient
+400 - invalid request body (lastRead is not a valid date)
+*/
+app.post("/set_patient_last_read", checkLogin, (req, res) => {
+  let user = verifyUser(req);
+  if (!user) {
+    res.sendStatus(401);
+    return;
+  }
+  let u = verifyPatient(req);
+  if (!u) {
+    if (user) {
+      //user is logged in but not authorized to view patient
+      res.sendStatus(403);
+      return;
+    }
+    res.sendStatus(401);
+    return;
+  }
+  let up = user.patients.find((p) => p.email === u.id)!;
+  try{
+    up.lastRead = new Date(req.body.lastRead);
+  } catch (e) {
+    
+    // console.error("Invalid date provided: ", req.body.lastRead);
+    res.sendStatus(400); //invalid request body
+    return;
+  }
+  res.sendStatus(200);
 });
 
 //changes name and returns the name associated with the user, if the user is logged in

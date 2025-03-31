@@ -1,12 +1,17 @@
 var spectate;
 let highCount = 0; // Initialize high count for readings above the threshold
-function addToReadings(reading) {
+let showLastRead = true; // Default to showing last read readings
+function addToReadings(reading, isAfterLastRead = true) { // Add a reading to the table, with an optional filter for last read time
     rd = [(new Date(reading.time)).toLocaleString(), reading.meal, reading.value, reading.measure_method, reading.comment];
     let tr = document.createElement("tr");
     if(reading.value>=spectate.threshold && spectate.threshold>=0){
         tr.className = "highreading";
         highCount++; // Increment high count if the reading is above the threshold
     }
+    if(!isAfterLastRead) {
+        tr.classList.add("read"); // Add a class for read readings
+    }
+
     for(let i of rd){
         let td = document.createElement("td");
         td.innerHTML = i;
@@ -14,11 +19,23 @@ function addToReadings(reading) {
     }
     document.getElementById("readings").appendChild(tr);
 }
+function toggleShowRead(){
+    showLastRead = !showLastRead; // Toggle the state
+    document.getElementById("toggleLastRead").innerHTML = showLastRead ? "Hide Viewed Readings" : "Show Viewed Readings";
+    addReadings(); // Refresh the readings to apply the new filter
+}
+
 function addReadings(){
     highCount = 0; // Reset high count for default sorting
     document.getElementById("readings").innerHTML = ""; // Clear previous readings
     for(let reading of spectate.readings) {
-        addToReadings(reading); // sort by time (most recent first)
+        if(!spectate.lastRead)
+            addToReadings(reading); // sort by time (most recent first)
+        else if(showLastRead) { // Only add readings after the last read time   
+            addToReadings(reading, new Date(reading.time) >= new Date(spectate.lastRead)); // Add to readings if it's after the last read time
+        }else if(new Date(reading.time) >= new Date(spectate.lastRead)){
+            addToReadings(reading); // reading is read
+        }
     }
     let elem = document.getElementById("highcount");
     if(highCount > 0 && spectate.threshold >= 0){
@@ -82,7 +99,11 @@ function loadData() {
         document.getElementById("threshold").innerHTML = spectate.threshold;
     }
     document.getElementById("readingcount").innerHTML = spectate.readings.length;
-    document.getElementById("readings").innerHTML = ""; // Clear previous readings
+    if(spectate.lastRead){
+        document.getElementById("lastRead").innerHTML = (new Date(spectate.lastRead)).toLocaleString();
+        document.getElementById("lastRead").parentElement.style.display = "block"; // Show the last read time
+    }
+    else document.getElementById("lastRead").parentElement.innerHTML = "none";
     addReadings();
 }
 window.onmessage = function(event) {
