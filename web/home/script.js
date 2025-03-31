@@ -1,9 +1,11 @@
 var data;
+let highCount = 0; // Initialize high count for threshold checking
 function addToReadings(reading) {
     rd = [(new Date(reading.time)).toLocaleString(), reading.meal, reading.value, reading.measure_method, reading.comment];
     let tr = document.createElement("tr");
     if(reading.value>=data.threshold && data.threshold>=0){
         tr.className = "highreading";
+        highCount++; // Increment high count if the reading is above the threshold
     }
     for(let i of rd){
         let td = document.createElement("td");
@@ -88,12 +90,24 @@ function addReading(){
     }
     document.getElementById("content").style.display = "none"; // Hide the main content while the form is open
 }
+function addReadings(){
+    highCount = 0; // Reset high count for default sorting
+    document.getElementById("readings").innerHTML = ""; // Clear previous readings
+    for(let reading of data.readings) {
+        addToReadings(reading); // sort by time (most recent first)
+    }
+    let elem = document.getElementById("highcount");
+    if(highCount > 0 && data.threshold >= 0){
+        elem.innerHTML = highCount;
+        elem.parentElement.style.display = "block"; // Show the high count if there are high readings
+    }else{
+        elem.parentElement.style.display = "none"; // Hide the high count if there are no high readings
+    }
+}
 function sort(attrIndex){
-    if(attrIndex<0){
-        document.getElementById("readings").innerHTML = ""; // Clear previous readings
-        for(let reading of data.readings) {
-            addToReadings(reading); // sort by time (most recent first)
-        }
+    if(attrIndex<0){ // default
+        addReadings(); // Add the most recent readings to the top
+        return; // No need to sort if we are resetting to default sorting by time
     }
     let readings = document.getElementById("readings").children;
     let elem = document.getElementById("readingsLabels").children[attrIndex];
