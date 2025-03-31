@@ -103,7 +103,7 @@ function loadData() {
         document.getElementById("lastRead").innerHTML = (new Date(spectate.lastRead)).toLocaleString();
         document.getElementById("lastRead").parentElement.style.display = "block"; // Show the last read time
     }
-    else document.getElementById("lastRead").parentElement.innerHTML = "none";
+    else document.getElementById("lastRead").parentElement.style.display = "none";
     addReadings();
 }
 window.onmessage = function(event) {

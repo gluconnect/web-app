@@ -34,7 +34,7 @@ app.use('/', express.static(path.join(import.meta.dirname, 'web')));
 var Users: User[] = [
   {
     id: "jack",
-    name: "jackk",
+    name: "Jack",
     password:
       "d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
     readings: [
@@ -56,12 +56,13 @@ var Users: User[] = [
       },
     ],
     viewers: [],
-    patients: [],
-    threshold: -1,
+    patients: [{ email: "jack2"}], // jack has a patient which is jack2
+    warnings: [], // list of warnings for patients with number of readings above threshold and latest warning threshold.
+    threshold: 115,
   },
   {
     id: "jack2",
-    name: "jackk2",
+    name: "Jack 2",
     password:
       "d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
     readings: [
@@ -82,11 +83,17 @@ var Users: User[] = [
         extra_data: new Map(),
       },
     ],
-    viewers: [],
+    viewers: [{email: "jack"}], // jack2 has a viewer which is jack
     patients: [],
-    threshold: -1,
+    warnings: [], // list of warnings for patients with number of readings above threshold and latest warning threshold.
+    threshold: 15,
   },
 ];
+type Warning = {
+  email: string,
+  warnings: number,
+  reading: GlucoReading
+}
 type User = {
   name: string;
   id: string;
@@ -95,6 +102,7 @@ type User = {
   patients: Array<{ email: string, lastRead?: Date }>; // lastRead is optional and can be used to store the last reading time for the patient
   threshold: number;
   readings: Array<GlucoReading>;
+  warnings: Array<Warning>; // list of warnings for patients with number of readings above threshold and latest warning threshold.
 };
 type GlucoReading = {
   time: Date;
@@ -138,6 +146,11 @@ function hash(value: string): string {
   hash.update(value);
   return hash.digest("hex");
 }
+
+function notifyWarning(viewer: User, warning: Warning) {
+  //TODO: notify the viewer about the warning
+}
+
 //allow clients to create user accounts. Must have email and password and email must not be duplicate.
 /*Possible response codes
 200 - user account created
@@ -158,6 +171,7 @@ app.post("/register", (req, res) => {
         patients: [],
         threshold: -1,
         readings: [],
+        warnings: []
       });
       console.log("New User Created: ", req.body.email);
       res.sendStatus(200);
@@ -256,7 +270,6 @@ app.post("/verify", (req, res) => {
 400 - invalid request body
 401 - user not logged in
 */
-//TODO: add warning to all connected viewers if the reading is above the threshold
 app.post("/add_reading", checkLogin, (req, res) => {
   if (!req.body) {
     res.sendStatus(400);
@@ -266,7 +279,7 @@ app.post("/add_reading", checkLogin, (req, res) => {
       res.sendStatus(401);
       return;
     }
-    let reading;
+    let reading: GlucoReading;
     try {
       reading = toReading(req.body.reading);
     } catch (e) {
@@ -274,18 +287,76 @@ app.post("/add_reading", checkLogin, (req, res) => {
       return;
     }
     user.readings.push(reading);
-    /*if (req.body.value >= user.threshold && user.viewers) {
+    if (req.body.value >= user.threshold && user.threshold >= 0) {
       for (let v of user.viewers) {
-        let u = getUser({ body: { email: v.email } });
-        if (!u.warnings) u.warnings = [];
-        u.warnings.push({ email: user?.id, reading: reading });
+        let u = getUser(v.email);
+        if(!u) continue; // if viewer is not found, skip
+        let existingWarning = u.warnings.find((w) => w.email === user.id);
+        if (existingWarning) {
+          // if warning already exists for this viewer, increment the count
+          existingWarning.warnings++;
+          existingWarning.reading = reading; // update the latest reading
+          notifyWarning(u, existingWarning); // notify the viewer if needed
+          continue;
+        }
+        u.warnings.push({ email: u.id, reading: reading, warnings: 1 });
+        notifyWarning(u, { email: u.id, reading: reading, warnings: 1 }); // notify the viewer for the first warning
       }
-    } TODO*/
+    }
     res.sendStatus(200);
   }
 });
 
-//TODO: add /update_warnings endpoint to notify viewers after a threshold change
+function updateWarnings(patient: User, notify: boolean){
+  let count = 0, latestReading: GlucoReading | null = null;
+  for (let reading of patient.readings) {
+    if (reading.value >= patient.threshold && patient.threshold >= 0) {
+      latestReading = reading; // keep track of the latest reading
+      count++;
+    }
+  }
+  if(latestReading)for(let v of patient.viewers) {
+    let viewer = getUser(v.email)!;
+    let existingWarning = viewer.warnings.find((w) => w.email === patient.id);
+    if (existingWarning) {
+      // if warning already exists for this viewer, update the count and latest reading
+      let isWorse = count>existingWarning.warnings;
+      existingWarning.warnings = count;
+      if(latestReading) existingWarning.reading = latestReading; // update the latest reading
+      if (notify&&isWorse) notifyWarning(viewer, existingWarning); // notify the viewer if needed and worse than previous warning count
+    }
+    else {
+      // if no warning exists, create a new one
+      viewer.warnings.push({
+        email: patient.id,
+        warnings: count,
+        reading: latestReading
+      });
+      if (notify) notifyWarning(viewer, viewer.warnings[viewer.warnings.length - 1]); // notify the viewer for the first warning
+    }
+  }else{
+    // if there are no readings, clear any existing warnings for the viewer
+    for(let v of patient.viewers) {
+      let viewer = getUser(v.email)!;
+      viewer.warnings = viewer.warnings.filter((w) => w.email !== patient.id); // remove any existing warnings for this patient
+    }
+  }
+}
+
+//notify viewers after a threshold change
+/*Possible response codes
+200 - warnings updated and viewers notified
+401 - user not logged in
+*/
+app.post("/update_warnings", checkLogin, (req, res) => {
+  let user = verifyUser(req);
+  if (!user) {
+    res.sendStatus(401);
+    return;
+  }
+  updateWarnings(user, true); // update warnings for the user and notify viewers
+  res.sendStatus(200);
+});
 
 //returns all readings associated with the user, if the user is logged in
 /*Possible response codes
@@ -385,6 +456,27 @@ app.post("/get_patients", checkLogin, (req, res) => {
   });
   res.status(200).json(rs);
 });
+
+app.post("/get_warnings", checkLogin, (req, res) => {
+  let user = verifyUser(req);
+  if (!user) {
+    res.sendStatus(401);
+    return;
+  }
+  let warnings = user.warnings.map((w) => {
+    let n = {
+      email: w.email,
+      name: "",
+      warnings: w.warnings,
+      reading: serializeReading(w.reading),
+    };
+    let u = getUser(w.email)!;
+    n.name = u.name;
+    return n;
+  });
+  res.status(200).json(warnings);
+});
+
 //returns the threshold associated with the user, if the user is logged in
 /*Possible response codes
 200 - threshold returned
@@ -553,6 +645,7 @@ app.post("/delete", (req, res) => {
       prey.patients = prey.patients.filter(
         (val) => val.email !== req.body.email,
       );
+      prey.warnings = prey.warnings.filter((w) => w.email !== req.body.email); // remove any warnings from viewer associated with the user being deleted
     }
   }
   if (user.patients) {
@@ -605,6 +698,7 @@ app.post("/connect_user", checkLogin, (req, res) => {
   user.viewers.push({ email: prey.id });
   prey.patients.push({ email: user.id });
   console.log("User connected: ", user.id, " to ", prey.id);
+  updateWarnings(user, false); // update warnings for the newly connected patient without notifying viewers
   res.status(200).json({email: prey.id, name: prey.name});
 });
 app.post("/disconnect_user", checkLogin, (req, res) => {
@@ -621,6 +715,7 @@ app.post("/disconnect_user", checkLogin, (req, res) => {
   console.log("User disconnected: ", user.id, " from ", prey.id);
   user.viewers = user.viewers.filter((val) => val.email !== prey.id);
   prey.patients = prey.patients.filter((val) => val.email !== user.id);
+  prey.warnings = prey.warnings.filter((w) => w.email !== user.id); // remove any warnings associated with the disconnected viewer
   res.sendStatus(200);
 });
 app.post("/disconnect_patient", checkLogin, (req, res) => {
@@ -637,6 +732,7 @@ app.post("/disconnect_patient", checkLogin, (req, res) => {
   console.log("User disconnected: ", user.id, " from ", prey.id);
   user.patients = user.patients.filter((val) => val.email !== prey.id);
   prey.viewers = prey.viewers.filter((val) => val.email !== user.id);
+  user.warnings = user.warnings.filter((w) => w.email !== prey.id); // remove any warnings associated with the disconnected patient
   res.sendStatus(200);
 });
 /*app.use('/welcome', (err, req, res, next)=>{

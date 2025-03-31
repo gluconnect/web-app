@@ -12,7 +12,6 @@ function go(page){
     }
 }
 async function loadEverything(){
-    data = {}; // Reset data object
     data.threshold = await (await fetch("/get_threshold",{
         method: "POST",
         headers: {
@@ -45,7 +44,6 @@ async function loadEverything(){
     //Note: patents and viewers are each an array of objects {name, email}
 }
 async function loadSpectate(){
-    spectate = {}; // Reset spectate object
     spectate.threshold = parseFloat(await (await fetch("/spectate_threshold",{
         method: "POST",
         headers: {
@@ -93,6 +91,9 @@ window.onmessage = async function(event) {
         if(res.status === 200){
             data.threshold = event.data.setThreshold;
             frame.contentWindow.postMessage(data, "*");
+        }else if(res.status === 401){
+            go("login"); // Redirect to login if session expired
+            frame.contentWindow.postMessage({error: "Session Expired"}, "*");
         }else{
             frame.contentWindow.postMessage({error: "Failed to set threshold"}, "*"); // Notify the frame of the error
         }
@@ -107,8 +108,27 @@ window.onmessage = async function(event) {
         if(res.status === 200){
             data.readings.unshift(event.data.newReading); // Add the new reading to the front of the list
             frame.contentWindow.postMessage(data, "*");
+        }else if(res.status === 401){
+            go("login"); // Redirect to login if session expired
+            frame.contentWindow.postMessage({error: "Session Expired"}, "*");
         }else{
             frame.contentWindow.postMessage({error: "Failed to add reading"}, "*"); // Notify the frame of the error
+        }
+    }else if(event.data === "updateWarnings"){ // warn users new
+        let res = await fetch("/update_warnings",{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
+        });
+        if(res.status === 200){
+            frame.contentWindow.postMessage({success: "Warnings updated successfully"}, "*"); // Notify the frame of the success
+        }else if(res.status === 401){
+            go("login"); // Redirect to login if session expired
+            frame.contentWindow.postMessage({error: "Session Expired"}, "*");
+        }else{
+            frame.contentWindow.postMessage({error: "Failed to update warnings"}, "*"); // Notify the frame of the error
         }
     }else if(event.data === "deleteAccount"){ // delete account
         let res = await fetch("/delete",{
@@ -135,6 +155,9 @@ window.onmessage = async function(event) {
         });
         if(res.status !== 200){
             frame.contentWindow.postMessage({error: "Failed to change name"}, "*"); // Notify the frame of the error
+        }else if(res.status === 401){
+            go("login"); // Redirect to login if session expired
+            frame.contentWindow.postMessage({error: "Session Expired"}, "*");
         }else{
             data.name = event.data.changeName; // Update the name in the data object
             frame.contentWindow.postMessage(data, "*"); // Notify the frame of the change
@@ -151,6 +174,9 @@ window.onmessage = async function(event) {
         });
         if(res.status !== 200){
             frame.contentWindow.postMessage({error: "Failed to change email"}, "*"); // Notify the frame of the error
+        }else if(res.status === 401){
+            go("login"); // Redirect to login if session expired
+            frame.contentWindow.postMessage({error: "Session Expired"}, "*");
         }else{
             data.creds.email = event.data.changeEmail; // Update the email in the data object
             frame.contentWindow.postMessage(data, "*"); // Notify the frame of the change
@@ -166,6 +192,9 @@ window.onmessage = async function(event) {
         });
         if(res.status !== 200){
             frame.contentWindow.postMessage({error: "Failed to change password"}, "*"); // Notify the frame of the error
+        }else if(res.status === 401){
+            go("login"); // Redirect to login if session expired
+            frame.contentWindow.postMessage({error: "Session Expired"}, "*");
         }else{
             data.creds.pass = event.data.changePassword; // Update the password in the data object
             frame.contentWindow.postMessage(data, "*"); // Notify the frame of the change
@@ -182,6 +211,9 @@ window.onmessage = async function(event) {
         if(res.status === 200){
             data.viewers.push(await res.json()); // Add the new viewer to the list
             frame.contentWindow.postMessage(data, "*");
+        }else if(res.status === 401){
+            go("login"); // Redirect to login if session expired
+            frame.contentWindow.postMessage({error: "Session Expired"}, "*");
         }else{
             frame.contentWindow.postMessage({error: "Failed to add viewer"}, "*"); // Notify the frame of the error
         }
@@ -196,6 +228,9 @@ window.onmessage = async function(event) {
         if(res.status === 200){
             data.viewers = data.viewers.filter(viewer => viewer.email !== event.data.removeViewer); // Remove the viewer from the list
             frame.contentWindow.postMessage(data, "*");
+        }else if(res.status === 401){
+            go("login"); // Redirect to login if session expired
+            frame.contentWindow.postMessage({error: "Session Expired"}, "*");
         }else{
             frame.contentWindow.postMessage({error: "Failed to remove viewer"}, "*"); // Notify the frame of the error
         }
@@ -210,6 +245,9 @@ window.onmessage = async function(event) {
         if(res.status === 200){
             data.patients = data.patients.filter(patient => patient.email !== event.data.removePatient); // Remove the patient from the list
             frame.contentWindow.postMessage(data, "*");
+        }else if(res.status === 401){
+            go("login"); // Redirect to login if session expired
+            frame.contentWindow.postMessage({error: "Session Expired"}, "*");
         }else{
             frame.contentWindow.postMessage({error: "Failed to remove patient"}, "*"); // Notify the frame of the error
         }
@@ -234,6 +272,9 @@ window.onmessage = async function(event) {
         });
         if(res.status !== 200){
             frame.contentWindow.postMessage({error: "Failed to set last read"}, "*"); // Notify the frame of the error
+        }else if(res.status === 401){
+            go("login"); // Redirect to login if session expired
+            frame.contentWindow.postMessage({error: "Session Expired"}, "*");
         }else{
             frame.contentWindow.postMessage({success: "Last read set successfully"}, "*"); // Notify the frame of the success
             spectate.lastRead = time; // Set the last read to the current time even if it fails
