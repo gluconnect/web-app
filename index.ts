@@ -92,7 +92,8 @@ var Users: User[] = [
 type Warning = {
   email: string,
   warnings: number,
-  reading: GlucoReading
+  reading: GlucoReading,
+  state?: string //TODO: state to keep track of the warning state (e.g., "new", "viewed", etc.)
 }
 type User = {
   name: string;
@@ -467,11 +468,13 @@ app.post("/get_warnings", checkLogin, (req, res) => {
     let n = {
       email: w.email,
       name: "",
+      threshold: -1,
       warnings: w.warnings,
       reading: serializeReading(w.reading),
     };
     let u = getUser(w.email)!;
     n.name = u.name;
+    n.threshold = u.threshold; // get the threshold for the viewer
     return n;
   });
   res.status(200).json(warnings);
@@ -563,6 +566,7 @@ app.post("/spectate_last_read", checkLogin, (req, res) => {
 403 - user not authorized to view patient
 400 - invalid request body (lastRead is not a valid date)
 */
+//TODO: clear warnings for patient
 app.post("/set_patient_last_read", checkLogin, (req, res) => {
   let user = verifyUser(req);
   if (!user) {

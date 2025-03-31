@@ -41,6 +41,19 @@ async function loadEverything(){
         },
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
     })).json();
+    data.warnings = await (await fetch("/get_warnings",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
+    })).json();
+    if(data.warnings.length>0){
+        document.getElementById("warningCount").parentElement.style.display = "block"; // Show the warning if there are any
+        document.getElementById("warningCount").innerHTML = data.warnings.length; // Set the warning count
+    }else{
+        document.getElementById("warningCount").parentElement.style.display = "none"; // Hide the warning if there are no warnings
+    }
     //Note: patents and viewers are each an array of objects {name, email}
 }
 async function loadSpectate(){
