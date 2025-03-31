@@ -1,6 +1,6 @@
 var data;
 function addToReadings(reading) {
-    rd = [new Date(reading.time), reading.meal, reading.value, reading.measure_method, reading.comment];
+    rd = [(new Date(reading.time)).toLocaleString(), reading.meal, reading.value, reading.measure_method, reading.comment];
     let tr = document.createElement("tr");
     if(reading.value>=data.threshold && data.threshold>=0){
         tr.className = "highreading";
@@ -88,6 +88,48 @@ function addReading(){
     }
     document.getElementById("content").style.display = "none"; // Hide the main content while the form is open
 }
+function sort(attrIndex){
+    if(attrIndex<0){
+        document.getElementById("readings").innerHTML = ""; // Clear previous readings
+        for(let reading of data.readings) {
+            addToReadings(reading); // sort by time (most recent first)
+        }
+    }
+    let readings = document.getElementById("readings").children;
+    let elem = document.getElementById("readingsLabels").children[attrIndex];
+    let sortDirection = false; // descending by default
+    if(elem.classList.contains("sortup")){
+        elem.classList.remove("sortup");
+        elem.classList.add("sortdown");
+    } else if(elem.classList.contains("sortdown")){
+        elem.classList.remove("sortdown");
+        sort(-1); // If already sorted down, reset to default sorting (by time)
+        return;
+    }else{
+        elem.classList.add("sortup"); // Set the current label to sort up
+        sortDirection = true; // ascending
+        document.getElementById("readingsLabels").querySelectorAll(".sortup, .sortdown").forEach(label => {
+            if(label!=elem)label.classList.remove("sortup", "sortdown"); // Remove any existing sort classes
+        });
+    }
+    let sortedReadings = Array.from(readings).sort((a, b) => { // a and b are tr elements
+        let aValue = a.children[attrIndex].innerHTML;
+        let bValue = b.children[attrIndex].innerHTML;//each child is a td element, get the innerHTML of the td element at index attrIndex
+        
+        // Convert to date if the attribute is time
+        if(attrIndex === 0) {
+            aValue = new Date(aValue);
+            bValue = new Date(bValue);
+            return sortDirection?(aValue - bValue):(bValue - aValue); // Compare dates
+        }
+        
+        // Default comparison for other attributes
+        return sortDirection?aValue.localeCompare(bValue, undefined, { numeric: true }): bValue.localeCompare(aValue, undefined, { numeric: true });
+    });
+    sortedReadings.forEach(reading => {
+        document.getElementById("readings").appendChild(reading); // Append sorted reading back to the table
+    });
+}
 function loadData() {
     document.getElementById("username").innerHTML = data.name;
     if(data.threshold<0){
@@ -98,10 +140,8 @@ function loadData() {
         document.getElementById("threshold").innerHTML = data.threshold;
     }
     document.getElementById("readingcount").innerHTML = data.readings.length;
-    document.getElementById("readings").innerHTML = ""; // Clear previous readings
-    for(let reading of data.readings) {
-        addToReadings(reading);
-    }
+    data.readings.reverse(); // Reverse the readings to show the most recent first
+    sort(-1); // Sort by time by default (index -1)(adds the most recent reading to the top)
 }
 window.onmessage = function(event) {
     if (event.data && Object.hasOwn(event.data, 'creds')) {

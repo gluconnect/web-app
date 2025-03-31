@@ -349,7 +349,6 @@ app.post("/get_viewers", checkLogin, (req, res) => {
   let rs = user.viewers.map(function (i) {
     let n = {
       email: i.email,
-      threshold: i.threshold,
       name: "",
     };
     let u = getUser(i.email);

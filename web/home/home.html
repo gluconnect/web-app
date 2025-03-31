@@ -16,12 +16,12 @@
         <p id="errorMessage" style="color: red;"></p>
         <table>
             <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Meal Time</th>
-                    <th>Glucose Reading Value</th>
-                    <th>Measuring Method</th>
-                    <th>Additional Comments</th>
+                <tr id="readingsLabels">
+                    <th onclick="sort(0)" class="sortable sortdown">Time</th>
+                    <th onclick="sort(1)" class="sortable">Meal Time</th>
+                    <th onclick="sort(2)" class="sortable">Glucose Reading Value</th>
+                    <th onclick="sort(3)" class="sortable">Measuring Method</th>
+                    <th onclick="sort(4)" class="sortable">Additional Comments</th>
                 </tr>
             </thead>
             <tbody id="readings">
