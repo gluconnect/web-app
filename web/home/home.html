@@ -12,13 +12,16 @@
         <h1><span id="threshold"></span></h1>
         <button id="setThreshold" onclick="setThreshold()">Set Threshold</button>
         <h3>You currently have <span id="readingcount">0</span> reading(s)</h3>
-        <h3 style="display: none; color: red;">You have <span id="highcount">0</span> high reading(s)!</h3>
+        <div style="flex-direction: column; align-items: center;">
+            <h3 style="color: red;">You have <span id="highcount">0</span> high reading(s)!</h3>
+            <button onclick="resetSort();sort(2);sort(2);">Show High Readings</button>
+        </div>
         <button id="addReading" onclick="addReading()">Add Reading</button>
         <p id="errorMessage" style="color: red;"></p>
         <table>
             <thead>
                 <tr id="readingsLabels">
-                    <th onclick="sort(0)" class="sortable sortdown">Time</th>
+                    <th onclick="sort(0)" class="sortable">Time</th>
                     <th onclick="sort(1)" class="sortable">Meal Time</th>
                     <th onclick="sort(2)" class="sortable">Glucose Reading Value</th>
                     <th onclick="sort(3)" class="sortable">Measuring Method</th>

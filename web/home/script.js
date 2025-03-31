@@ -99,14 +99,20 @@ function addReadings(){
     let elem = document.getElementById("highcount");
     if(highCount > 0 && data.threshold >= 0){
         elem.innerHTML = highCount;
-        elem.parentElement.style.display = "block"; // Show the high count if there are high readings
+        elem.parentElement.parentElement.style.display = "flex"; // Show the high count if there are high readings
     }else{
-        elem.parentElement.style.display = "none"; // Hide the high count if there are no high readings
+        elem.parentElement.parentElement.style.display = "none"; // Hide the high count if there are no high readings
     }
+}
+function resetSort(elem){ // optional element to avoid resetting the sort if we are calling from sort()
+    document.getElementById("readingsLabels").querySelectorAll(".sortup, .sortdown").forEach(label => {
+        if(elem!=null&&label!=elem||elem==null)label.classList.remove("sortup", "sortdown"); // Remove any existing sort classes
+    });
 }
 function sort(attrIndex){
     if(attrIndex<0){ // default
         addReadings(); // Add the most recent readings to the top
+        resetSort();
         return; // No need to sort if we are resetting to default sorting by time
     }
     let readings = document.getElementById("readings").children;
@@ -122,9 +128,7 @@ function sort(attrIndex){
     }else{
         elem.classList.add("sortup"); // Set the current label to sort up
         sortDirection = true; // ascending
-        document.getElementById("readingsLabels").querySelectorAll(".sortup, .sortdown").forEach(label => {
-            if(label!=elem)label.classList.remove("sortup", "sortdown"); // Remove any existing sort classes
-        });
+        resetSort(elem);
     }
     let sortedReadings = Array.from(readings).sort((a, b) => { // a and b are tr elements
         let aValue = a.children[attrIndex].innerHTML;
@@ -155,7 +159,7 @@ function loadData() {
     }
     document.getElementById("readingcount").innerHTML = data.readings.length;
     data.readings.reverse(); // Reverse the readings to show the most recent first
-    sort(-1); // Sort by time by default (index -1)(adds the most recent reading to the top)
+    addReadings(); // Add the readings to the table
 }
 window.onmessage = function(event) {
     if (event.data && Object.hasOwn(event.data, 'creds')) {
