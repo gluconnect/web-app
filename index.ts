@@ -191,7 +191,7 @@ function verifyUser(req: any /*TODO*/): User | undefined {
     }
   }
 }
-//TODO: might be deprecated
+
 function getUser(email: string): User | undefined {
   return Users.find(function (user) {
     return user.id === email;
@@ -228,11 +228,11 @@ function verifyViewer(req: any /*TODO*/): User | undefined {
   }
 }
 //function getPatient(req)
-//TODO: might be deprecated
+//TODO: implement sessions
 app.get("/logout", function (req, res) {
-  req.session.destroy(function () {
-    console.log("User logged out");
-  });
+  //req.session.destroy(function () {
+    //console.log("User logged out");
+  //});
   res.response(200);
 });
 //check if the provided creds are correct, if not, throw error and fail next step *use as middeware in all user account functions
@@ -566,7 +566,6 @@ app.post("/spectate_last_read", checkLogin, (req, res) => {
 403 - user not authorized to view patient
 400 - invalid request body (lastRead is not a valid date)
 */
-//TODO: clear warnings for patient
 app.post("/set_patient_last_read", checkLogin, (req, res) => {
   let user = verifyUser(req);
   if (!user) {
@@ -587,11 +586,11 @@ app.post("/set_patient_last_read", checkLogin, (req, res) => {
   try{
     up.lastRead = new Date(req.body.lastRead);
   } catch (e) {
-    
-    // console.error("Invalid date provided: ", req.body.lastRead);
     res.sendStatus(400); //invalid request body
     return;
   }
+  //clear all warnings for this patient with last reading time before the last read time
+  user.warnings = user.warnings.filter((w) => w.email !== u.id || up.lastRead!<w.reading.time); // remove any warnings associated with the patient
   res.sendStatus(200);
 });
 

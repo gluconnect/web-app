@@ -11,6 +11,14 @@ function go(page){
         document.getElementById("nav").style.display = "flex"; // Show the navigation bar on other pages
     }
 }
+function updateWarningCount(){
+    if(data.warnings.length>0){
+        document.getElementById("warningCount").parentElement.style.display = "block"; // Show the warning if there are any
+        document.getElementById("warningCount").innerHTML = data.warnings.length; // Set the warning count
+    }else{
+        document.getElementById("warningCount").parentElement.style.display = "none"; // Hide the warning if there are no warnings
+    }
+}
 async function loadEverything(){
     data.threshold = await (await fetch("/get_threshold",{
         method: "POST",
@@ -48,12 +56,7 @@ async function loadEverything(){
         },
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
     })).json();
-    if(data.warnings.length>0){
-        document.getElementById("warningCount").parentElement.style.display = "block"; // Show the warning if there are any
-        document.getElementById("warningCount").innerHTML = data.warnings.length; // Set the warning count
-    }else{
-        document.getElementById("warningCount").parentElement.style.display = "none"; // Hide the warning if there are no warnings
-    }
+    updateWarningCount(); // Update the warning count on the page
     //Note: patents and viewers are each an array of objects {name, email}
 }
 async function loadSpectate(){
@@ -102,6 +105,9 @@ window.onmessage = async function(event) {
             body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, threshold: event.data.setThreshold })
         });
         if(res.status === 200){
+            if(data.threshold>event.data.setThreshold){ // Show option to update warnings if threshold is decreased
+                frame.contentWindow.postMessage("showUpdateWarnings", "*"); // Notify the frame of the change
+            }
             data.threshold = event.data.setThreshold;
             frame.contentWindow.postMessage(data, "*");
         }else if(res.status === 401){
@@ -142,6 +148,7 @@ window.onmessage = async function(event) {
             frame.contentWindow.postMessage({error: "Session Expired"}, "*");
         }else{
             frame.contentWindow.postMessage({error: "Failed to update warnings"}, "*"); // Notify the frame of the error
+            frame.contentWindow.postMessage("showUpdateWarnings", "*"); // show the update warning popup to retry
         }
     }else if(event.data === "deleteAccount"){ // delete account
         let res = await fetch("/delete",{
@@ -291,6 +298,8 @@ window.onmessage = async function(event) {
         }else{
             frame.contentWindow.postMessage({success: "Last read set successfully"}, "*"); // Notify the frame of the success
             spectate.lastRead = time; // Set the last read to the current time even if it fails
+            data.warnings = data.warnings.filter(warning => warning.email !== spectate.email || new Date(spectate.lastRead)<new Date(warning.reading.time)); // Remove the warnings for the patient
+            updateWarningCount(); // Update the warning count on the page
             frame.contentWindow.postMessage(spectate, "*");
         }
     }

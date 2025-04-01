@@ -42,8 +42,11 @@ function appendViewer(viewer) {
     let viewerElement = document.createElement("li");
     viewerElement.innerHTML = `
         <span style="font-weight: bold;">${viewer.name} <span style="font-weight: normal;">(${viewer.email})</span></span>
-        <button class="remove" onclick="removeViewer('${viewer.email}')">Remove</button>
-    `;
+        <div>
+            <button onclick="settings('${viewer.email}')">Settings</button>
+            <button class="remove" onclick="removeViewer('${viewer.email}')">Remove</button>
+        </div>
+    `; // TODO: Implement settings(allow viewer to change threshold, custom threshold, warning notification methods, etc.)
     viewerElement.style.display = "flex";
     viewerElement.style.justifyContent = "space-between";
     viewerElement.style.alignItems = "center";
@@ -52,10 +55,16 @@ function appendViewer(viewer) {
     document.getElementById("viewerList").appendChild(viewerElement);
 }
 function addPatient(patient) {
+    let warning = data.warnings.find(w => w.email === patient.email); // Find the warning for the patient if it exists
     // create a new patient element
     let patientElement = document.createElement("li");
+    let potentialWarnMsg = ""; // Initialize potential warning message
+    if(warning){
+        potentialWarnMsg = `<div class="warning"><span>`+warning.warnings+` warning(s)!</span><br><span>`+warning.reading.value+` at `+(new Date(warning.reading.time)).toLocaleString()+`</span></div>`;
+    }
     patientElement.innerHTML = `
         <span style="font-weight: bold;">${patient.name} <span style="font-weight: normal;">(${patient.email})</span></span>
+        `+potentialWarnMsg+`
         <div>
             <button onclick="spectate('${patient.email}','${patient.name}')">View</button>
             <button class="remove" onclick="removePatient('${patient.email}')">Remove</button>

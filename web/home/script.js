@@ -165,6 +165,8 @@ window.onmessage = function(event) {
     if (event.data && Object.hasOwn(event.data, 'creds')) {
         data = event.data;
         loadData();
+    }else if(event.data==="showUpdateWarnings"){
+        document.getElementById("updateWarningsPopup").style.removeProperty("display"); // Show update warning option
     }else if(event.data && event.data.error){
         document.getElementById("errorMessage").innerHTML = event.data.error; // Display error message
     }
