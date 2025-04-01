@@ -121,7 +121,8 @@ button[type="submit"]{
     width: 100%;
 }
 ul{
-    width: 30%;
+    width: 490px;
+    max-width: 100%;
     margin: 0;
     padding: 0;
 }
