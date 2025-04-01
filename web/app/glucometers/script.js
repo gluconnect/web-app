@@ -1,3 +1,3 @@
-function addGlucometer(){
+function addGlucometer() {
     // TODO
 }

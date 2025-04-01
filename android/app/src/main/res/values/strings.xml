@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Gluconnect</string>
+    <string name="title_activity_main">Gluconnect</string>
+    <string name="package_name">org.seirea.gluconnect</string>
+    <string name="custom_url_scheme">org.seirea.gluconnect</string>
+</resources>
