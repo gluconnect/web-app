@@ -29,7 +29,7 @@ app.use(
     secret: "ogbdfoodbkfpobfskpod32332323|_+sevsdvv//?~ZZ",
   }),
 );
-app.use('/', express.static(path.join(import.meta.dirname, 'web')));
+app.use('/app', express.static(path.join(import.meta.dirname, 'web/app')));
 
 var Users: User[] = [
   {
