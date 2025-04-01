@@ -4,7 +4,10 @@
     "npm:@types/node@^22.13.10": "22.13.10",
     "npm:body-parser@^1.20.3": "1.20.3",
     "npm:cookie-parser@^1.4.7": "1.4.7",
+    "npm:cookie-signature@^1.2.2": "1.2.2",
+    "npm:cookie@^1.0.2": "1.0.2",
     "npm:cors@^2.8.5": "2.8.5",
+    "npm:depd@2": "2.0.0",
     "npm:express-session@^1.18.1": "1.18.1",
     "npm:express@^4.21.2": "4.21.2",
     "npm:tsc@^2.0.4": "2.0.4",
@@ -83,11 +86,17 @@
     "cookie-signature@1.0.7": {
       "integrity": "sha512-NXdYc3dLr47pBkpUCHtKSwIOQXLVn8dZEuywboCOJY/osA0wFSLlSawr3KN8qXJEyX66FcONTH8EIlVuK0yyFA=="
     },
+    "cookie-signature@1.2.2": {
+      "integrity": "sha512-D76uU73ulSXrD1UXF4KE2TMxVVwhsnCgfAyTg9k8P6KGZjlXKrOLe4dJQKI3Bxi5wjesZoFXJWElNWBjPZMbhg=="
+    },
     "cookie@0.7.1": {
       "integrity": "sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w=="
     },
     "cookie@0.7.2": {
       "integrity": "sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w=="
+    },
+    "cookie@1.0.2": {
+      "integrity": "sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA=="
     },
     "cors@2.8.5": {
       "integrity": "sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==",
@@ -470,7 +479,10 @@
         "npm:@types/node@^22.13.10",
         "npm:body-parser@^1.20.3",
         "npm:cookie-parser@^1.4.7",
+        "npm:cookie-signature@^1.2.2",
+        "npm:cookie@^1.0.2",
         "npm:cors@^2.8.5",
+        "npm:depd@2",
         "npm:express-session@^1.18.1",
         "npm:express@^4.21.2",
         "npm:tsc@^2.0.4",
