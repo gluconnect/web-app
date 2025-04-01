@@ -750,6 +750,10 @@ app.use('/setnum', (err, req, res, next)=>{
   console.log(err)
   res.redirect('/login')
 })*/
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(import.meta.dirname, "web/index.html"));
+});
 server.listen(
   port,
   () => console.log(`Le serveur est listener sur porte ${port}!`),
