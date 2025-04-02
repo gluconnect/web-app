@@ -19,6 +19,7 @@ async function login(e){
         errors.innerHTML = "Passwords do not match.";
         return;
     }
+    url = document.getElementById("server").value;
     let res = await fetch(url+"/register", {
         method: "POST",
         headers: {
