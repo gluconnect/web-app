@@ -14,11 +14,16 @@
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
-
+            <div id="serverUrl" style="display: none;" class="form">
+                <label for="server">Server URL:</label>
+                <input type="text" id="server" name="server" placeholder="https://gluconnect.seirea.org">
+                <button type="button" onclick="document.getElementById('serverUrl').style.display='none'">Close</button>
+            </div>
             <button type="submit">Login</button>
         </form>
         <p id="errorMessage" class="warning"></p>
         <button id="register" style="position: fixed; bottom: 0; font-size: 20px;" onclick="window.location.href='../register/register.html'">Register</button>
+        <button id="enterCustomServer" onclick="document.getElementById('serverUrl').style.display='flex'">Enter Custom Server URL</button>
     </div>
 
     <script src="script.js"></script>

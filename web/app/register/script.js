@@ -1,3 +1,4 @@
+let url = "";
 async function login(e){
     e.preventDefault(); // Prevent form submission
     var name = document.getElementById("name").value; // Get the name value
@@ -18,12 +19,12 @@ async function login(e){
         errors.innerHTML = "Passwords do not match.";
         return;
     }
-    let res = await fetch("/register", {
+    let res = await fetch(url+"/register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email: username, password: password, name: name }) // Send the data to the server
+        body: JSON.stringify({ email: username, password: password, name: name }, "*") // Send the data to the server
     });
     // If response is 200, register is successful
     if(res.status === 200){

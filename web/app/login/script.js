@@ -1,3 +1,4 @@
+let url = ""; // URL for the server
 async function login(e){
     e.preventDefault(); // Prevent form submission
     var username = document.getElementById("username").value;
@@ -8,7 +9,8 @@ async function login(e){
         errors.innerHTML = "Please enter both username and password.";
         return;
     }
-    let res = await fetch("/verify", {
+    url = document.getElementById("server").value; // Get the server URL from the input field
+    let res = await fetch(url+"/verify", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -19,7 +21,7 @@ async function login(e){
     // If response is 200, log in is successful
     if(res.status === 200){
         errors.innerHTML = ""; // Clear error message
-        window.parent.postMessage({ email: username, pass: password, name: await res.text()}); // Send message to parent frame
+        window.parent.postMessage({ email: username, pass: password, name: await res.text(), server: url}, "*"); // Send message to parent frame
     } else {
         errors.innerHTML = "Invalid username or password. Please try again.";
     }

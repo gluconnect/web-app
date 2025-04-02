@@ -2,6 +2,9 @@ var data = {
 };
 var spectate = {
 };
+var server = {
+    url: ""
+}
 let frame = document.getElementById("contentFrame");
 function go(page){
     frame.src = page+"/"+page+".html";
@@ -20,14 +23,14 @@ function updateWarningCount(){
     }
 }
 async function loadEverything(){
-    data.threshold = await (await fetch("/get_threshold",{
+    data.threshold = await (await fetch(server.url+"/get_threshold",{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
     })).text();
-    data.readings = await (await fetch("/get_readings",{
+    data.readings = await (await fetch(server.url+"/get_readings",{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -35,21 +38,21 @@ async function loadEverything(){
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
     })).json();
     data.readings = data.readings.reverse(); // Reverse the readings to show the most recent first
-    data.viewers = await (await fetch("/get_viewers",{
+    data.viewers = await (await fetch(server.url+"/get_viewers",{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
     })).json();
-    data.patients = await (await fetch("/get_patients",{
+    data.patients = await (await fetch(server.url+"/get_patients",{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
     })).json();
-    data.warnings = await (await fetch("/get_warnings",{
+    data.warnings = await (await fetch(server.url+"/get_warnings",{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -60,21 +63,21 @@ async function loadEverything(){
     //Note: patents and viewers are each an array of objects {name, email}
 }
 async function loadSpectate(){
-    spectate.threshold = parseFloat(await (await fetch("/spectate_threshold",{
+    spectate.threshold = parseFloat(await (await fetch(server.url+"/spectate_threshold",{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, uemail: spectate.email })
     })).text());
-    spectate.readings = await (await fetch("/spectate_readings",{
+    spectate.readings = await (await fetch(server.url+"/spectate_readings",{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, uemail: spectate.email })
     })).json();
-    let lastRead = await (await fetch("/spectate_last_read",{
+    let lastRead = await (await fetch(server.url+"/spectate_last_read",{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -90,6 +93,7 @@ window.onmessage = async function(event) {
     if (Object.hasOwn(event.data, 'email')){ // login
         data.creds = event.data;
         data.name = event.data.name;
+        server.url = event.data.server; // Set the server URL
         await loadEverything();
         go("home");
         frame.onload = ()=>{frame.contentWindow.postMessage(data, "*");}
@@ -97,7 +101,7 @@ window.onmessage = async function(event) {
         data = {};
         go("login");
     }else if(Object.hasOwn(event.data, 'setThreshold')){ // set threshold
-        let res = await fetch("/change_threshold",{
+        let res = await fetch(server.url+"/change_threshold",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -117,7 +121,7 @@ window.onmessage = async function(event) {
             frame.contentWindow.postMessage({error: "Failed to set threshold"}, "*"); // Notify the frame of the error
         }
     }else if(Object.hasOwn(event.data, 'newReading')){ // add new reading
-        let res = await fetch("/add_reading",{
+        let res = await fetch(server.url+"/add_reading",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -134,7 +138,7 @@ window.onmessage = async function(event) {
             frame.contentWindow.postMessage({error: "Failed to add reading"}, "*"); // Notify the frame of the error
         }
     }else if(event.data === "updateWarnings"){ // warn users new
-        let res = await fetch("/update_warnings",{
+        let res = await fetch(server.url+"/update_warnings",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -151,7 +155,7 @@ window.onmessage = async function(event) {
             frame.contentWindow.postMessage("showUpdateWarnings", "*"); // show the update warning popup to retry
         }
     }else if(event.data === "deleteAccount"){ // delete account
-        let res = await fetch("/delete",{
+        let res = await fetch(server.url+"/delete",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -166,7 +170,7 @@ window.onmessage = async function(event) {
         }
     }else if(Object.hasOwn(event.data, "changeName")){
         data.name = event.data.changeName;
-        let res = await fetch("/change_name",{
+        let res = await fetch(server.url+"/change_name",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -185,7 +189,7 @@ window.onmessage = async function(event) {
         }
     }else if(Object.hasOwn(event.data, "changeEmail")){
         data.creds.email = event.data.changeEmail;
-        let res = await fetch("/change_email",{
+        let res = await fetch(server.url+"/change_email",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -203,7 +207,7 @@ window.onmessage = async function(event) {
             frame.contentWindow.postMessage({success: "Email changed successfully"}, "*"); // Notify the frame of the success
         }
     }else if(Object.hasOwn(event.data, "changePassword")){
-        let res = await fetch("/change_password",{
+        let res = await fetch(server.url+"/change_password",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -221,7 +225,7 @@ window.onmessage = async function(event) {
             frame.contentWindow.postMessage({success: "Password changed successfully"}, "*"); // Notify the frame of the success
         }
     }else if(Object.hasOwn(event.data, "addViewer")){ // add viewer
-        let res = await fetch("/connect_user",{
+        let res = await fetch(server.url+"/connect_user",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -238,7 +242,7 @@ window.onmessage = async function(event) {
             frame.contentWindow.postMessage({error: "Failed to add viewer"}, "*"); // Notify the frame of the error
         }
     }else if(Object.hasOwn(event.data, "removeViewer")){ // remove viewer
-        let res = await fetch("/disconnect_user",{
+        let res = await fetch(server.url+"/disconnect_user",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -255,7 +259,7 @@ window.onmessage = async function(event) {
             frame.contentWindow.postMessage({error: "Failed to remove viewer"}, "*"); // Notify the frame of the error
         }
     }else if(Object.hasOwn(event.data, "removePatient")){ // remove patient
-        let res = await fetch("/disconnect_patient",{
+        let res = await fetch(server.url+"/disconnect_patient",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -283,7 +287,7 @@ window.onmessage = async function(event) {
         frame.onload = ()=>{frame.contentWindow.postMessage(data, "*");} // Notify the frame of the change
     }else if(event.data === "setLastRead"){ // delete spectate
         let time = (new Date()).toISOString();
-        let res = await fetch("/set_patient_last_read",{
+        let res = await fetch(server.url+"/set_patient_last_read",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
