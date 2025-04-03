@@ -98,6 +98,13 @@ window.onmessage = async function(event) {
         go("home");
         frame.onload = ()=>{frame.contentWindow.postMessage(data, "*");}
     }else if(event.data==='logout'){ // logout
+        await fetch(server.url+"/logout",{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: data.creds.email })
+        });
         data = {};
         go("login");
     }else if(Object.hasOwn(event.data, 'setThreshold')){ // set threshold

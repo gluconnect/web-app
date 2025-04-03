@@ -145,3 +145,6 @@ body{
 .sortable.sortdown{
     background-image: url('/app/src/sort_down.svg'); /* todo */
 }
+*{
+    font-family: arial;
+}
