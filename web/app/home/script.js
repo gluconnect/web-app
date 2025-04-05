@@ -94,8 +94,7 @@ function addReadingForm(){
 function addReadings(){
     highCount = 0; // Reset high count for default sorting
     document.getElementById("readings").innerHTML = ""; // Clear previous readings
-    for(let i = data.readings.length-1; i >= 0; i--) { // Add readings in reverse order to show the most recent first
-        let reading = data.readings[i];
+    for(let reading of data.readings) { // Add readings in reverse order to show the most recent first
         addToReadings(reading); // sort by time (most recent first)
     }
     let elem = document.getElementById("highcount");

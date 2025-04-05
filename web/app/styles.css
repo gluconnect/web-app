@@ -39,7 +39,7 @@ button:hover {
     align-items: center;
     width: 100%;
     overflow: auto;
-    margin: 1rem;
+    margin: 1rem 0;
 }
 
 #contentFrame{
