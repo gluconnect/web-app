@@ -150,6 +150,7 @@ function hash(value: string): string {
 
 function notifyWarning(viewer: User, warning: Warning) {
   //TODO: notify the viewer about the warning
+  console.log("Warn user "+viewer.name+" of high reading for "+warning.email);
 }
 
 //allow clients to create user accounts. Must have email and password and email must not be duplicate.
@@ -288,7 +289,7 @@ app.post("/add_reading", checkLogin, (req, res) => {
       return;
     }
     user.readings.push(reading);
-    if (req.body.value >= user.threshold && user.threshold >= 0) {
+    if (reading.value >= user.threshold && user.threshold >= 0) {
       for (let v of user.viewers) {
         let u = getUser(v.email);
         if(!u) continue; // if viewer is not found, skip
@@ -300,8 +301,8 @@ app.post("/add_reading", checkLogin, (req, res) => {
           notifyWarning(u, existingWarning); // notify the viewer if needed
           continue;
         }
-        u.warnings.push({ email: u.id, reading: reading, warnings: 1 });
-        notifyWarning(u, { email: u.id, reading: reading, warnings: 1 }); // notify the viewer for the first warning
+        u.warnings.push({ email: user.id, reading: reading, warnings: 1 });
+        notifyWarning(u, { email: user.id, reading: reading, warnings: 1 }); // notify the viewer for the first warning
       }
     }
     res.sendStatus(200);
@@ -756,5 +757,6 @@ app.get("/", (req, res) => {
 });
 server.listen(
   port,
+  "0.0.0.0",
   () => console.log(`Le serveur est listener sur porte ${port}!`),
 );
