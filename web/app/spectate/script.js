@@ -1,4 +1,3 @@
-var spectate;
 let highCount = 0; // Initialize high count for readings above the threshold
 let showLastRead = true; // Default to showing last read readings
 function addToReadings(reading, isAfterLastRead = true) { // Add a reading to the table, with an optional filter for last read time
@@ -106,11 +105,13 @@ function loadData() {
     else document.getElementById("lastRead").parentElement.style.display = "none";
     addReadings();
 }
-window.onmessage = function(event) {
-    if (event.data && Object.hasOwn(event.data, 'email')) {
-        spectate = event.data; // Get the data from the parent
-        loadData();
-    }else if(event.data && event.data.error){
-        document.getElementById("errorMessage").innerHTML = event.data.error; // Display error message
-    }
+function updateData(){
+    loadData();
+    setData();
+}
+function error(msg){
+    document.getElementById("errorMessage").innerHTML = msg; // Display error message
+}
+function success(msg){
+    //document.getElementById("successMessage").innerHTML = msg; // Display success message
 }

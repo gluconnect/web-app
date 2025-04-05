@@ -52,7 +52,7 @@ function addReadingForm(){
     //create a form popup to add a reading
     let form = document.createElement("form");
     form.setAttribute("id", "readingform");
-    form.setAttribute("onsubmit", "return false;");
+    //form.setAttribute("onsubmit", "return false;");
     form.innerHTML = `
         <h2>Add a Reading</h2>
         <label for="time">Time:</label>
@@ -72,7 +72,8 @@ function addReadingForm(){
     `;
     form.classList.add("form");
     document.body.appendChild(form);
-    form.onsubmit = function() {
+    form.addEventListener("submit", (function(e) {
+        e.preventDefault(); // Prevent default form submission
         let newReading = {
             meal: document.getElementById("meal").value,
             value: parseInt(document.getElementById("value").value),
@@ -80,10 +81,10 @@ function addReadingForm(){
             comment: document.getElementById("comment").value,
             time: new Date().toISOString()
         };
-        addReading(newReading);
+        this.newReading(newReading);
         document.body.removeChild(form);
         document.getElementById("content").style.display = "flex"; // Show the main content again
-    };
+    }).bind(this));
     document.getElementById("cancelreadingform").onclick = function() {
         document.body.removeChild(form);
         document.getElementById("content").style.display = "flex"; // Show the main content again
@@ -93,7 +94,8 @@ function addReadingForm(){
 function addReadings(){
     highCount = 0; // Reset high count for default sorting
     document.getElementById("readings").innerHTML = ""; // Clear previous readings
-    for(let reading of data.readings) {
+    for(let i = data.readings.length-1; i >= 0; i--) { // Add readings in reverse order to show the most recent first
+        let reading = data.readings[i];
         addToReadings(reading); // sort by time (most recent first)
     }
     let elem = document.getElementById("highcount");
@@ -158,7 +160,6 @@ function loadData() {
         document.getElementById("threshold").innerHTML = data.threshold;
     }
     document.getElementById("readingcount").innerHTML = data.readings.length;
-    data.readings.reverse(); // Reverse the readings to show the most recent first
     addReadings(); // Add the readings to the table
 }
 function updateData(){

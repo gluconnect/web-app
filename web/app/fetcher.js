@@ -1,3 +1,5 @@
+
+
 var data = {
 };
 var spectate = {
@@ -115,6 +117,7 @@ async function setCreds(crds){
 async function spectatePatient(email, name){
     spectate.email = email; // Set the email of the patient to spectate
     spectate.name = name; // Set the name of the patient to spectate
+    sessionStorage.removeItem("spectate"); // Remove the spectate data from session storage
     await loadSpectate(); // Load the spectate data
     setSpectateData(); // Set the spectate data in session storage
     go("spectate");

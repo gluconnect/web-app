@@ -100,7 +100,8 @@ label{
     font-size: 30px;
 }
 form input, select{
-    width: 100%;
+    width: 500px;
+    max-width: 100%;
     padding: 10px;
     height: 60px;
     margin: 5px 0;

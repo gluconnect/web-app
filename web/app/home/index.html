@@ -18,7 +18,7 @@
         </div>
         <button id="addReading" onclick="addReadingForm()">Add Reading</button>
         <div class="popup" id="updateWarningsPopup" style="display: none;">
-            <button onclick="window.parent.postMessage('updateWarnings', '*'); this.parentElement.style.display = 'none';">Update Warnings</button>
+            <button onclick="updateWarnings(); this.parentElement.style.display = 'none';">Update Warnings</button>
             <p>Warn connected viewers of dangerous<br>readings after threshold change</p>
         </div>
         <p id="errorMessage" style="color: red;"></p>
