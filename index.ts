@@ -29,7 +29,7 @@ app.use(
     secret: "ogbdfoodbkfpobfskpod32332323|_+sevsdvv//?~ZZ",
   }),
 );
-app.use('/app', express.static(path.join(import.meta.dirname, 'web/app')));
+app.use('/', express.static(path.join(import.meta.dirname, 'web')));
 
 var Users: User[] = [
   {
@@ -752,9 +752,6 @@ app.use('/setnum', (err, req, res, next)=>{
   res.redirect('/login')
 })*/
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(import.meta.dirname, "web/index.html"));
-});
 server.listen(
   port,
   "0.0.0.0",
