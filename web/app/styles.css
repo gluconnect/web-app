@@ -134,14 +134,14 @@ body{
 }
 .sortable{
     cursor: pointer;
-    background-image: url('/app/src/sort_both.svg'); /* todo */
+    background-image: url('../src/sort_both.svg'); /* todo */
     background-repeat: no-repeat;
     background-position: right center;
 }
 
 .sortable.sortup{
-    background-image: url('/app/src/sort_up.svg'); /* todo */
+    background-image: url('../src/sort_up.svg'); /* todo */
 }
 .sortable.sortdown{
-    background-image: url('/app/src/sort_down.svg'); /* todo */
+    background-image: url('../src/sort_down.svg'); /* todo */
 }

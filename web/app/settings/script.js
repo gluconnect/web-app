@@ -1,25 +1,20 @@
-var data;
-function logout() {
-    // Send a message to the parent frame to log out
-    window.parent.postMessage("logout", "*");
-}
 function loadData() {
     document.getElementById("currentName").innerHTML = data.name;
     document.getElementById("currentEmail").innerHTML = data.creds.email;
 }
-function changeName(){
+function changeNameForm(){
     document.getElementById("nameInput").style.display = "block"; // Show the name input field
     document.getElementById("newName").value = data.name; // Set the current name as the value
 }
-function changeEmail(){
+function changeEmailForm(){
     document.getElementById("emailInput").style.display = "block"; // Show the email input field
     document.getElementById("newEmail").value = data.creds.email; // Set the current email as the value
 }
-function changePassword(){
+function changePasswordForm(){
     document.getElementById("passwordInput").style.display = "block"; // Show the password input field
     document.getElementById("newPassword").value = ""; // Clear the password input field
 }
-function deleteAccount(){
+function deleteAccountForm(){
     document.getElementById("deleteConfirmation").style.display = "block"; // Show the delete account confirmation
 }
 function cancelName(){
@@ -37,14 +32,14 @@ function cancelDelete(){
 function submitName(){
     let newName = document.getElementById("newName").value;
     if(newName !== data.name && newName !== ""){
-        window.parent.postMessage({changeName: newName}, "*"); // Send the new name to the parent frame
+        changeName(newName);
     }
     cancelName(); // Hide the name input field
 }
 function submitEmail(){
     let newEmail = document.getElementById("newEmail").value;
     if(newEmail !== data.creds.email && newEmail !== ""){
-        window.parent.postMessage({changeEmail: newEmail}, "*"); // Send the new email to the parent frame
+        changeEmail(newEmail); // Send the new email to the parent frame
     }
     cancelEmail(); // Hide the email input field
 }
@@ -71,28 +66,26 @@ function submitPassword(){
         return; // Exit the function if the old password is incorrect
     }
     // If all checks pass, send the new password to the parent frame
-    window.parent.postMessage({changePassword: newPassword}, "*"); // Send the new password to the parent frame
+    changePassword(newPassword); // Send the new password to the parent frame
     cancelPassword(); // Hide the password input field
 }
 function confirmDelete(){
     let confirmDelete = document.getElementById("deletePassword").value;
     if(confirmDelete === data.creds.pass){
-        window.parent.postMessage("deleteAccount", "*"); // Send the delete account message to the parent frame
+        deleteAccount(); // Send the delete account request to the parent frame
     }else{
         document.getElementById("errorMessage").innerHTML = "Password is incorrect"; // Display error message
         return; // Exit the function if the password is incorrect
     }
     cancelDelete(); // Hide the delete account confirmation
 }
-window.onmessage = function(event) {
-    if (event.data && Object.hasOwn(event.data, 'creds')) {
-        data = event.data;
-        loadData();
-    }else if(event.data && event.data.error){
-        document.getElementById("errorMessage").innerHTML = event.data.error; // Display error message
-        document.getElementById("successMessage").innerHTML = "";
-    }else if(event.data && event.data.success){
-        document.getElementById("successMessage").innerHTML = event.data.success; // Display success message
-        document.getElementById("errorMessage").innerHTML = "";
-    }
+function updateData(){
+    loadData();
+    setData();
+}
+function error(msg){
+    document.getElementById("errorMessage").innerHTML = msg; // Display error message
+}
+function success(msg){
+    document.getElementById("successMessage").innerHTML = msg; // Display success message
 }

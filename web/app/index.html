@@ -3,16 +3,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gluconnect Web</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/app/styles.css">
 </head>
 <body>
-    <iframe id="contentFrame" title="Content Frame"></iframe>
-    <footer id="nav">
-        <button id="home" onclick="go('home')">Home</button>
-        <button id="glucometers" onclick="go('glucometers')">Connect</button>
-        <button id="users" onclick="go('users')">Patients and Caretakers<br><span style="display: none;" class="warning"><span id="warningCount">0</span> Warning(s)!</span></button>
-        <button id="settings" onclick="go('settings')">Settings</button>
-    </footer>
-    <script src="switcher.js"></script>
+    <div id="content">
+        <h1>Gluconnect</h1>
+        <a href="login/index.html">Log In/Sign Up</a>
+    </div>
 </body>
 </html>

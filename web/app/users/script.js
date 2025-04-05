@@ -1,4 +1,3 @@
-let data = {};
 function initializeToggles(){
     // Initialize the toggles for viewers and patients
     document.getElementById("viewers").style.display = "flex"; // Hide viewers by default
@@ -28,15 +27,15 @@ function togglePatients() {
         show.style.display = "block";
     }
 }
-function spectate(email, name) {
+/*function spectate(email, name) {
     window.parent.postMessage({ spectate: email, spectateName: name }, "*"); // Send message to parent to spectate the patient
 }
 function removeViewer(email) {
-    window.parent.postMessage({ removeViewer: email }, "*"); // Send message to parent to remove viewer
+    
 }
 function removePatient(email) {
     window.parent.postMessage({ removePatient: email }, "*"); // Send message to parent to remove patient
-}
+}*/
 function appendViewer(viewer) {
     // create a new viewer element
     let viewerElement = document.createElement("li");
@@ -54,7 +53,7 @@ function appendViewer(viewer) {
     viewerElement.style.width = "100%";
     document.getElementById("viewerList").appendChild(viewerElement);
 }
-function addPatient(patient) {
+function appendPatient(patient) {
     let warning = data.warnings.find(w => w.email === patient.email); // Find the warning for the patient if it exists
     // create a new patient element
     let patientElement = document.createElement("li");
@@ -66,7 +65,7 @@ function addPatient(patient) {
         <span style="font-weight: bold;">${patient.name} <span style="font-weight: normal;">(${patient.email})</span></span>
         `+potentialWarnMsg+`
         <div>
-            <button onclick="spectate('${patient.email}','${patient.name}')">View</button>
+            <button onclick="spectatePatient('${patient.email}','${patient.name}')">View</button>
             <button class="remove" onclick="removePatient('${patient.email}')">Remove</button>
         </div>
     `;
@@ -79,7 +78,7 @@ function addPatient(patient) {
 }
 // Function to add a new viewer
 // This function creates a form to add a new viewer and appends it to the viewer list
-function addViewer() {
+function addViewerForm() {
     // create form to add a new viewer
     let form = document.createElement("form");
     form.innerHTML = `
@@ -89,7 +88,7 @@ function addViewer() {
     form.onsubmit = async (e) => {
         e.preventDefault();
         let email = document.getElementById("viewerEmail").value;
-        window.parent.postMessage({ addViewer: email }, "*"); // Send message to parent to add viewer
+        addViewer(email); // Call the function to add the viewer
         form.remove(); // Remove the form after submission
     }
     document.getElementById("viewers").appendChild(form);
@@ -134,14 +133,16 @@ function loadData() {
     // Add patients
     document.getElementById("patientList").innerHTML = ""; // Clear the list before adding patients
     data.patients.forEach(viewer => {
-        addPatient(viewer);
+        appendPatient(viewer);
     });
 }
-window.onmessage = function(event) {
-    if (event.data && Object.hasOwn(event.data, 'creds')) {
-        data = event.data;
-        loadData();
-    }else if(event.data && event.data.error){
-        document.getElementById("errorMessage").innerHTML = event.data.error; // Display error message
-    }
+function updateData(){
+    loadData();
+    setData();
+}
+function error(msg){
+    document.getElementById("errorMessage").innerHTML = msg; // Display error message
+}
+function success(msg){
+    //document.getElementById("successMessage").innerHTML = msg; // Display success message
 }

@@ -12,7 +12,7 @@
             <h1>Viewers<button onclick="toggleViewers()" style="position: absolute;">^</button></h1>
             <h3>You currently have <span id="currentViewerCount">0</span> connected viewers.</h3>
             <p id="viewerInstructions">Connect a viewer to authorize them to view your glucose readings</p>
-            <button id="addViewer" onclick="addViewer()">Connect</button>
+            <button id="addViewer" onclick="addViewerForm()">Connect</button>
             <ul id="viewerList">
                 <!-- List of available caretakers will be populated here -->
             </ul>
@@ -30,9 +30,9 @@
         <p id="errorMessage" class="warning"></p>
     </div>
 
+    <script src="../inject-navbar.js"></script>
+    <script src="../fetcher.js"></script>
     <script src="script.js"></script>
+    <script src="api.js"></script>
 </body>
 </html>
-<!-- This HTML file is for the "Patients and Caretakers" section of the Gluconnect web application. 
-     It allows users to connect new patients and displays the current number of connected patients. 
-     The JavaScript file 'script.js' will handle the dynamic functionality of this page. -->

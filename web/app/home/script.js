@@ -14,7 +14,7 @@ function addToReadings(reading) {
     }
     document.getElementById("readings").appendChild(tr);
 }
-function setThreshold(){
+function setThresholdForm(){
     //create a form popup to set the threshold
     let form = document.createElement("form");
     form.setAttribute("id", "thresholdform");
@@ -30,7 +30,7 @@ function setThreshold(){
     form.onsubmit = function() {
         let newThreshold = parseFloat(document.getElementById("thresholdinput").value);
         if(newThreshold >= -1){
-            window.parent.postMessage({setThreshold: newThreshold}, "*");
+            setThreshold(newThreshold);
         }else{
             alert("Threshold must be a non-negative number or -1 to remove the threshold.");
         }
@@ -48,7 +48,7 @@ function setThreshold(){
     }
     document.getElementById("content").style.display = "none"; // Hide the main content while the form is open
 }
-function addReading(){
+function addReadingForm(){
     //create a form popup to add a reading
     let form = document.createElement("form");
     form.setAttribute("id", "readingform");
@@ -80,7 +80,7 @@ function addReading(){
             comment: document.getElementById("comment").value,
             time: new Date().toISOString()
         };
-        window.parent.postMessage({newReading: newReading}, "*");
+        addReading(newReading);
         document.body.removeChild(form);
         document.getElementById("content").style.display = "flex"; // Show the main content again
     };
@@ -161,13 +161,16 @@ function loadData() {
     data.readings.reverse(); // Reverse the readings to show the most recent first
     addReadings(); // Add the readings to the table
 }
-window.onmessage = function(event) {
-    if (event.data && Object.hasOwn(event.data, 'creds')) {
-        data = event.data;
-        loadData();
-    }else if(event.data==="showUpdateWarnings"){
-        document.getElementById("updateWarningsPopup").style.removeProperty("display"); // Show update warning option
-    }else if(event.data && event.data.error){
-        document.getElementById("errorMessage").innerHTML = event.data.error; // Display error message
-    }
+function updateData(){
+    loadData();
+    setData();
+}
+function showUpdateWarnings(){
+    document.getElementById("updateWarningsPopup").style.removeProperty("display");
+}
+function error(msg){
+    document.getElementById("errorMessage").innerHTML = msg; // Display error message
+}
+function success(msg){
+    //document.getElementById("successMessage").innerHTML = msg; // Display success message
 }
