@@ -17,8 +17,61 @@ iframe {
     height: 100%;
     border: none;
 }
+html {
+    /* Default light mode styles */
+    --color-background: white;
+    --color-background-dark: lightgray;
+    --color-text: black;
+    --color-success: darkgreen;
+    --color-danger: red;
+    --color-warning: lightcoral;
+    --color-info: cyan;
+}
+@media (prefers-color-scheme: dark) {
+    /* Dark mode styles */
+    html {
+        --color-background: black;
+        --color-background-dark: #333;
+        --color-text: white;
+        --color-success: lightgreen;
+        --color-danger: lightcoral;
+        --color-warning: orange;
+        --color-info: lightblue;
+    }
+}
+@media (prefers-contrast: more) {
+    /* High contrast mode styles */
+    html {
+        --color-background: black;
+        --color-background-dark: #000;
+        --color-text: white;
+        --color-success: green;
+        --color-danger: red;
+        --color-warning: yellow;
+        --color-info: cyan;
+    }
+}
+.theme-glucose {
+    --color-background: lightgreen;
+    --color-background-dark: darkgreen;
+    --color-text: black;
+    --color-success: green;
+    --color-danger: red;
+    --color-warning: lightcoral;
+    --color-info: cyan;
+}
+.theme-ketone {
+    --color-background: lightcoral;
+    --color-background-dark: darkred;
+    --color-text: black;
+    --color-success: green;
+    --color-danger: red;
+    --color-warning: red;
+    --color-info: lightblue;
+}
 body {
-    background-color: white;
+    background-color: var(--color-background);
+    color: var(--color-text);
 }
 button {
     border: none;
@@ -46,8 +99,8 @@ th{
     width: 20%;
 }
 thead{
-    border-bottom: black solid 2px;
-    border-top: black solid 2px;
+    border-bottom: var(--color-text) solid 2px;
+    border-top: var(--color-text) solid 2px;
 }
 table{
     width: 100%;
@@ -55,11 +108,11 @@ table{
     border-collapse: collapse;
 }
 .highreading{
-    color: red;
+    color: var(--color-danger);
     font-weight: bold;
 }
 .warning{
-    color: red;
+    color: var(--color-danger);
     font-weight: bold;
 }
 .read{
@@ -72,8 +125,8 @@ table{
     width: 100%;
 }
 .cancel{
-    background-color: lightcoral;
-    color: white;
+    background-color: var(--color-warning);
+    color: var(--color-background);
     border: none;
     position: fixed;
     top: 0;
@@ -98,7 +151,7 @@ form input, select{
     padding: 10px;
     height: 60px;
     margin: 5px 0;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-background-dark);
     border-radius: 4px;
     font-size: 30px;
 }
@@ -108,7 +161,7 @@ button[type="submit"]{
     cursor: pointer;
 }
 .microform{
-    background-color: limegreen;
+    background-color: var(--color-background-dark);
     padding: 5px;
     margin: 5px;
 }
