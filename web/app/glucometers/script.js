@@ -4,7 +4,7 @@ const GLUCONNECT_SERVICE = "00001808-0000-1000-8000-00805f9b34fb";
 const GET_READING_CHAR = "00002a18-0000-1000-8000-00805f9b34fb"
 const NUM_READING_CHAR = "00002a34-0000-1000-8000-00805f9b34fb"
 
-function appendGlucometer(glucometer) {
+window.appendGlucometer = function(glucometer) {
     // create a new viewer element
     let viewerElement = document.createElement("li");
     viewerElement.innerHTML = `
@@ -22,7 +22,7 @@ function appendGlucometer(glucometer) {
     viewerElement.style.width = "100%";
     document.getElementById("glucometerList").appendChild(viewerElement);
 }
-async function addGlucometer() {
+window.addGlucometer = async function () {
     console.log("started scan")
     try {
       await BleClient.initialize({
