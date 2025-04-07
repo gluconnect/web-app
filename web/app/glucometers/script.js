@@ -22,6 +22,11 @@ window.appendGlucometer = function(glucometer) {
     viewerElement.style.width = "100%";
     document.getElementById("glucometerList").appendChild(viewerElement);
 }
+
+function onDisconnect(devid) {
+    alert("Disconnnect from: " + devid);
+}
+
 window.addGlucometer = async function () {
     console.log("started scan")
     try {
@@ -42,7 +47,9 @@ window.addGlucometer = async function () {
     })
 
     const result = await BleClient.read(dev.deviceId, GLUCONNECT_SERVICE, NUM_READING_CHAR);
-    alert("readings:", result);
+    const decoded = result.getBigUint64(0, true);
+    console.log("DECODED READINGS:", decoded)
+    alert(decoded)
   
   
     setTimeout(async () => {
