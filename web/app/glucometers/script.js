@@ -44,7 +44,7 @@ window.appendGlucometer = function(glucometer) {
 }
 
 // Set glucometer status to disconnected
-function setGlucometerStatus(devid, status) {
+window.setGlucometerStatus = function(devid, status) {
     for (let i = 0; i < glucometers.length; i++) {
         if (glucometers[i].id === devid) {
             glucometers[i].status = status;
@@ -54,7 +54,7 @@ function setGlucometerStatus(devid, status) {
     }
     return null; // device not found in the list
 }
-function addGlucometer(devid, name, status) {
+window.addGlucometer = function(devid, name, status) {
     let dev = new Glucometer(devid, name, status);
     glucometers.push(dev); // add the device to the list
     appendGlucometer(dev); // add the device to the list on the page
@@ -62,7 +62,7 @@ function addGlucometer(devid, name, status) {
 }
 
 //remove the glucometer from the list
-function removeGlucometer(devid) {
+window.removeGlucometer = function(devid) {
     disconnectGlucometer(devid); // disconnect the device
     for (let i = 0; i < glucometers.length; i++) {
         if (glucometers[i].id === devid) {
@@ -73,7 +73,7 @@ function removeGlucometer(devid) {
     }
 }
 
-function onDisconnect(devid) {
+window.onDisconnect = function(devid) {
     let dev = setGlucometerStatus(devid, "Disconnected"); // remove the device from the list
     if (dev === null) {
         console.log("Device not found in list");
@@ -104,14 +104,14 @@ window.newGlucometer = async function () {
       console.log(error);
     }
 }
-function loadData(){
+window.loadData = function(){
     document.getElementById("glucometerList").innerHTML = ""; // clear the list
     for (let j = 0; j < glucometers.length; j++) {
         appendGlucometer(glucometers[j]); // re-add all glucometers to the list
     }
     document.getElementById("currentGlucometerCount").innerHTML = glucometers.length; // Set the warning count
 }
-function updateData(){
+window.updateData = function(){
     loadData();
     setGlucometers();
 }

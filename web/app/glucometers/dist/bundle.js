@@ -1084,14 +1084,14 @@ var BleClientClass = class {
       return result.devices;
     });
   }
-  async connect(deviceId, onDisconnect2, options) {
+  async connect(deviceId, onDisconnect, options) {
     await this.queue(async () => {
       var _a;
-      if (onDisconnect2) {
+      if (onDisconnect) {
         const key = `disconnected|${deviceId}`;
         await ((_a = this.eventListeners.get(key)) === null || _a === void 0 ? void 0 : _a.remove());
         const listener = await BluetoothLe.addListener(key, () => {
-          onDisconnect2(deviceId);
+          onDisconnect(deviceId);
         });
         this.eventListeners.set(key, listener);
       }
@@ -1300,8 +1300,6 @@ var BleClient = new BleClientClass();
 init_conversion();
 
 // web/app/glucometers/script.js
-var GLUCONNECT_SERVICE = "00001808-0000-1000-8000-00805f9b34fb";
-var NUM_READING_CHAR = "00002a34-0000-1000-8000-00805f9b34fb";
 window.appendGlucometer = function(glucometer) {
   let viewerElement = document.createElement("li");
   viewerElement.innerHTML = `
@@ -1318,35 +1316,6 @@ window.appendGlucometer = function(glucometer) {
   viewerElement.style.flexDirection = "row";
   viewerElement.style.width = "100%";
   document.getElementById("glucometerList").appendChild(viewerElement);
-};
-function onDisconnect(devid) {
-  alert("Disconnnect from: " + devid);
-}
-window.addGlucometer = async function() {
-  console.log("started scan");
-  try {
-    await BleClient.initialize({
-      androidNeverForLocation: true
-    });
-    const dev = await BleClient.requestDevice({
-      services: [GLUCONNECT_SERVICE],
-      namePrefix: "Gluconnect"
-    });
-    await BleClient.connect(dev.deviceId, (deviceId) => onDisconnect(deviceId));
-    console.log("connected to device", dev.deviceId);
-    await BleClient.getServices(dev.deviceId).then((x) => {
-      console.log("services", x);
-    });
-    const result = await BleClient.read(dev.deviceId, GLUCONNECT_SERVICE, NUM_READING_CHAR);
-    const decoded = result.getBigUint64(0, true);
-    console.log("DECODED READINGS:", decoded);
-    alert(decoded);
-    setTimeout(async () => {
-      await BleClient.disconnect(dev.deviceId);
-    }, 5e3);
-  } catch (error) {
-    console.log(error);
-  }
 };
 /*! Bundled license information:
 
