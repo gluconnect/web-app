@@ -26,11 +26,11 @@ app.use(
   session({
     saveUninitialized: true,
     resave: true,
-    secret: "ogbdfoodbkfpobfskpod32332323|_+sevsdvv//?~ZZ",
+    secret: "QEWNIOfjewiofe9032t892490fiueqw0j+-_rwj09fWJWE(EJ)(fwe90je//fwe",
   }),
 );
 app.use('/', express.static(path.join(import.meta.dirname, 'web')));
-
+// TODO: make user uuid unique and not based on email
 var Users: User[] = [
   {
     id: "jack",
@@ -180,15 +180,21 @@ app.post("/register", (req, res) => {
     }
   }
 });
-//return the user associated with the email and password if they exist, otherwise return null
-function verifyUser(req: any /*TODO*/): User | undefined {
+//return the user associated with the email and password if they exist, otherwise return undefined
+function verifyUser(req: any /*TODO*/, requirePassword: boolean = false): User | undefined {
+  if(!requirePassword&&req.session.user&&(!req.body.email||req.body.email&&req.session.user.id === req.body.email)){
+    return getUser(req.session.user.id); // check if user is already logged in // TODO
+  }
   if (!req.body || !req.body.email || !req.body.password) {
     return undefined;
   } else {
     let user = getUser(req.body.email);
     if (!user) return undefined;
     if (user.password === hash(req.body.password)) {
+      if(!req.session.user)req.session.user = user; // set session user if not already set
       return user;
+    }else{
+      return undefined;
     }
   }
 }
@@ -231,9 +237,9 @@ function verifyViewer(req: any /*TODO*/): User | undefined {
 //function getPatient(req)
 //TODO: implement sessions
 app.get("/logout", function (req, res) {
-  //req.session.destroy(function () {
-    //console.log("User logged out");
-  //});
+  req.session.destroy(function () {
+    console.log("User logged out");
+  });
   res.response(200);
 });
 //check if the provided creds are correct, if not, throw error and fail next step *use as middeware in all user account functions
@@ -249,7 +255,7 @@ function checkLogin(req, res, next) {
   }
 }
 
-//allows user to log in, if the provided email and password are correct
+//allows user to log in, if the provided email and password are correct. returns user name if successful
 /*Possible response codes
 200 - user logged in
 401 - user not logged in
