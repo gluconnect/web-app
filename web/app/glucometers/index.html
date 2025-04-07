@@ -11,7 +11,7 @@
         <h1>Glucose Monitors</h1>
         <h3>You currently have <span id="currentGlucometerCount">0</span> connected glucose monitors.</h3>
         <p id="instructions">To connect a new glucose monitor, please click the button below and select a glucose monitor from the pop up list.<br>...</p>
-        <button id="addGlucometer" onclick="addGlucometer()">Connect</button>
+        <button id="addGlucometer" onclick="newGlucometer()">Connect</button>
         <ul id="glucometerList">
             <!-- List of available glucometers will be populated here -->
         </ul>
@@ -19,5 +19,8 @@
 
     <script type="module" src="dist/bundle.js"></script>
     <script src="../inject-navbar.js"></script>
+    <script src="../fetcher.js"></script>
+    <script src="redbone.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

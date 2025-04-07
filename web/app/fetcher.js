@@ -4,6 +4,9 @@ var data = {
 };
 var spectate = {
 };
+var glucometers = [
+];
+var shouldHaveSession = false; // sets to true when the user logs in, and false when the user logs out. Also sets to true if server requests credentials
 var server = {
     url: "http://localhost:8008" // Server URL
 }
@@ -106,6 +109,18 @@ async function getSpectateData(){
 }
 function setSpectateData(){
     sessionStorage.setItem("spectate", JSON.stringify(spectate)); // Set the spectate data in session storage
+}
+function getGlucometers(){
+    let d = localStorage.getItem("glucometers"); // Get the glucometers data from session storage
+    if(d){
+        glucometers = JSON.parse(d); // Parse the data from JSON
+    }else{
+        glucometers = []; // Set to empty array if not available
+    }
+    return glucometers; // Return the glucometers object
+}
+function setGlucometers(){
+    localStorage.setItem("glucometers", JSON.stringify(glucometers)); // Set the glucometers data in session storage
 }
 async function setCreds(crds){
     data.creds = crds; // Set the credentials in the data object
