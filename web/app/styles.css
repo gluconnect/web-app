@@ -128,9 +128,9 @@ table{
     background-color: var(--color-warning);
     color: var(--color-background);
     border: none;
-    position: fixed;
+    /* position: fixed;
     top: 0;
-    right: 0;
+    right: 0; */
 }
 .popup{
     position: fixed;
