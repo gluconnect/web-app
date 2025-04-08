@@ -1310,7 +1310,10 @@ var Glucometer = class {
   connect() {
     attemptConnect(this);
   }
-  getReadings() {
+  async getReadings() {
+    if (this.status !== "Connected") {
+      await this.connect();
+    }
     getReadingsFromGlucometer(this);
   }
   disconnect() {

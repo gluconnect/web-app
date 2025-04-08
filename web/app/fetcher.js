@@ -1,11 +1,11 @@
-
-
 var data = {
 };
 var spectate = {
 };
 var glucometers = [
 ];
+var checkGlucometersCooldown = 5000; // 5 seconds
+var checkGlucometersInterval = null; // Interval for checking glucometers
 var shouldHaveSession = false; // sets to true when the user logs in, and false when the user logs out. Also sets to true if server requests credentials
 var server = {
     url: "http://localhost:8008" // Server URL
@@ -16,6 +16,15 @@ function updateWarningCount(){
         document.getElementById("warningCount").innerHTML = data.warnings.length; // Set the warning count
     }else{
         document.getElementById("warningCount").parentElement.style.display = "none"; // Hide the warning if there are no warnings
+    }
+}
+function startCheckGlucometers(){
+    if(checkGlucometersInterval === null){ // If the interval is not set
+        checkGlucometersInterval = setInterval(() => { // Set the interval to check for glucometers
+            for(let i=0; i<glucometers.length; i++){
+                glucometers[i].getReadings(); // Check the status of each glucometer
+            }
+        }, checkGlucometersCooldown); // Set the cooldown to 5 seconds
     }
 }
 async function loadEverything(){
@@ -150,3 +159,13 @@ function logout(){
 
     go("login");
 }
+function attemptStartGlucoCheck(){
+    let elem = document.createElement("script")
+    elem.src = "../glucometers/dist/bundle.js"; // Load the glucometer script
+    document.head.appendChild(elem); // Append the script to the head
+    elem.onload = function() { // When the script is loaded
+        console.log("Glucometer script loaded"); // Log the message
+        startCheckGlucometers(); // Start the glucometer check
+    }
+}
+attemptStartGlucoCheck(); // Attempt to start the glucometer check

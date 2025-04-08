@@ -13,7 +13,10 @@ class Glucometer {
     connect() {
         attemptConnect(this); // attempt to connect to the device
     }
-    getReadings() {
+    async getReadings() {
+        if(this.status !== "Connected") {
+            await this.connect(); // connect to the device if not connected
+        }
         getReadingsFromGlucometer(this); // get the readings from the device
     }
     disconnect() {

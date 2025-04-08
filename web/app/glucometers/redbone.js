@@ -28,5 +28,4 @@ async function getReadingsFromGlucometer(glucometer){
     const result = await BleClient.read(deviceId, GLUCONNECT_SERVICE, NUM_READING_CHAR);
     const decoded = result.getBigUint64(0, true);
     console.log("DECODED READINGS:", decoded)
-    alert(decoded)
 }
