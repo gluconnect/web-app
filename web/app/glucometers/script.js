@@ -104,7 +104,7 @@ window.newGlucometer = async function () {
             await BleClient.disconnect(dev.deviceId);
         }, 5000);
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
 }
 window.loadData = function(){

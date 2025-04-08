@@ -6,3 +6,4 @@ composer.phar
 # composer.lock
 
 node_modules/
+web/app/glucometers/dist/
