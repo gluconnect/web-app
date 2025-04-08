@@ -19,13 +19,13 @@ function updateWarningCount(){
     }
 }
 function startCheckGlucometers(){
-    if(checkGlucometersInterval === null){ // If the interval is not set
-        checkGlucometersInterval = setInterval(() => { // Set the interval to check for glucometers
-            for(let i=0; i<glucometers.length; i++){
-                glucometers[i].getReadings(); // Check the status of each glucometer
-            }
-        }, checkGlucometersCooldown); // Set the cooldown to 5 seconds
-    }
+    // if(checkGlucometersInterval === null){ // If the interval is not set
+    //     checkGlucometersInterval = setInterval(() => { // Set the interval to check for glucometers
+    //         for(let i=0; i<glucometers.length; i++){
+    //             glucometers[i].getReadings(); // Check the status of each glucometer
+    //         }
+    //     }, checkGlucometersCooldown); // Set the cooldown to 5 seconds
+    // }
 }
 async function loadEverything(){
     data.threshold = await (await fetch(server.url+"/get_threshold",{
@@ -168,4 +168,4 @@ function attemptStartGlucoCheck(){
         startCheckGlucometers(); // Start the glucometer check
     }
 }
-attemptStartGlucoCheck(); // Attempt to start the glucometer check
+// attemptStartGlucoCheck(); // Attempt to start the glucometer check

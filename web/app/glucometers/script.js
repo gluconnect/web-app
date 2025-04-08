@@ -19,7 +19,7 @@ class Glucometer {
         if(this.status !== "Connected") {
             await this.connect(); // connect to the device if not connected
         }
-        redbone.getReadingsFromGlucometer(this); // get the readings from the device
+        return redbone.getNumReadings(this); // get the readings from the device
     }
     disconnect() {
         redbone.disconnectGlucometer(this.id); // disconnect the device
@@ -36,7 +36,7 @@ window.appendGlucometer = function(glucometer) {
         <span style="font-weight: bold;">${glucometer.name}</span>
         <span style="font-weight: bold; color: ${glucometer.status === "Connected" ? "green" : "red"};">${glucometer.status}</span>
         <div>
-            <button>Settings</button>
+            <button onclick="alert(await glucometer.getReadings())">NumReadings</button>
             <button class="remove" onclick="removeGlucometer('${glucometer.id}')">Remove</button>
         </div>
     `; // TODO: Implement settings(allow viewer to change threshold, custom threshold, warning notification methods, etc.)
@@ -80,11 +80,13 @@ window.removeGlucometer = function(devid) {
 
 window.onDisconnect = function(devid) {
     let dev = setGlucometerStatus(devid, "Disconnected"); // remove the device from the list
+
     if (dev === null) {
         console.log("Device not found in list");
         return;
     }
-    console.log("Glucometer disconnected: " + dev.name);
+
+    console.log("[onDisconnect] Glucometer disconnected: " + dev.name);
 }
 
 window.newGlucometer = async function () {

@@ -10,6 +10,8 @@ export async function attemptConnect(glucometer){
     await BleClient.connect(deviceId, (deviceId) => onDisconnect(deviceId));
     glucometer.setStatus("Connected"); // set the status to connected
     console.log('connected to device', deviceId);
+
+    alert(await getNumReadings(glucometer));
 }
 export async function disconnectGlucometer(devid) {
     let dev = setGlucometerStatus(devid, "Disconnected"); // set the status to disconnected
@@ -18,7 +20,7 @@ export async function disconnectGlucometer(devid) {
         console.log('disconnected from device', dev.deviceId);
     }
 }
-export async function getReadingsFromGlucometer(glucometer){
+export async function getNumReadings(glucometer){
     let deviceId = glucometer.id; // get the device id from the glucometer object
     // get services from the device
     await BleClient.getServices(deviceId).then((x) => {
@@ -26,6 +28,5 @@ export async function getReadingsFromGlucometer(glucometer){
     })
     //actually read the data from the device
     const result = await BleClient.read(deviceId, GLUCONNECT_SERVICE, NUM_READING_CHAR);
-    const decoded = result.getBigUint64(0, true);
-    console.log("DECODED READINGS:", decoded)
+    return result.getBigUint64(0, true);
 }
