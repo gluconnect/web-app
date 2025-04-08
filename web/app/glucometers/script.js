@@ -1,8 +1,10 @@
 import { BleClient } from '@capacitor-community/bluetooth-le';
+import * as redbone from './redbone.js';
 
 const GLUCONNECT_SERVICE = "00001808-0000-1000-8000-00805f9b34fb";
 const GET_READING_CHAR = "00002a18-0000-1000-8000-00805f9b34fb"
 const NUM_READING_CHAR = "00002a34-0000-1000-8000-00805f9b34fb"
+
 
 class Glucometer {
     constructor(id, name, status) {
@@ -11,16 +13,16 @@ class Glucometer {
         this.status = status; // Connected, Disconnected, etc.
     }
     connect() {
-        attemptConnect(this); // attempt to connect to the device
+        redbone.attemptConnect(this); // attempt to connect to the device
     }
     async getReadings() {
         if(this.status !== "Connected") {
             await this.connect(); // connect to the device if not connected
         }
-        getReadingsFromGlucometer(this); // get the readings from the device
+        redbone.getReadingsFromGlucometer(this); // get the readings from the device
     }
     disconnect() {
-        disconnectGlucometer(this.id); // disconnect the device
+        redbone.disconnectGlucometer(this.id); // disconnect the device
     }
     setStatus(status) {
         this.status = status; // set the status of the device
@@ -66,7 +68,7 @@ window.addGlucometer = function(devid, name, status) {
 
 //remove the glucometer from the list
 window.removeGlucometer = function(devid) {
-    disconnectGlucometer(devid); // disconnect the device
+    redbone.disconnectGlucometer(devid); // disconnect the device
     for (let i = 0; i < glucometers.length; i++) {
         if (glucometers[i].id === devid) {
             glucometers.splice(i, 1); // remove the device from the list
@@ -82,7 +84,7 @@ window.onDisconnect = function(devid) {
         console.log("Device not found in list");
         return;
     }
-    alert("Glucometer disconnected: " + dev.name);
+    console.log("Glucometer disconnected: " + dev.name);
 }
 
 window.newGlucometer = async function () {
@@ -98,11 +100,6 @@ window.newGlucometer = async function () {
         });
 
         addGlucometer(dev.deviceId, dev.name, "?"); // add the device to the list
-    
-    
-        setTimeout(async () => {
-            await BleClient.disconnect(dev.deviceId);
-        }, 5000);
     } catch (error) {
       alert(error);
     }
