@@ -1300,6 +1300,27 @@ var BleClient = new BleClientClass();
 init_conversion();
 
 // web/app/glucometers/script.js
+var GLUCONNECT_SERVICE = "00001808-0000-1000-8000-00805f9b34fb";
+var Glucometer = class {
+  constructor(id, name, status) {
+    this.id = id;
+    this.name = name;
+    this.status = status;
+  }
+  connect() {
+    attemptConnect(this);
+  }
+  getReadings() {
+    getReadingsFromGlucometer(this);
+  }
+  disconnect() {
+    disconnectGlucometer(this.id);
+  }
+  setStatus(status) {
+    this.status = status;
+    loadData();
+  }
+};
 window.appendGlucometer = function(glucometer) {
   let viewerElement = document.createElement("li");
   viewerElement.innerHTML = `
@@ -1316,6 +1337,69 @@ window.appendGlucometer = function(glucometer) {
   viewerElement.style.flexDirection = "row";
   viewerElement.style.width = "100%";
   document.getElementById("glucometerList").appendChild(viewerElement);
+};
+window.setGlucometerStatus = function(devid, status) {
+  for (let i = 0; i < glucometers.length; i++) {
+    if (glucometers[i].id === devid) {
+      glucometers[i].status = status;
+      loadData();
+      return glucometers[i];
+    }
+  }
+  return null;
+};
+window.addGlucometer = function(devid, name, status) {
+  let dev = new Glucometer(devid, name, status);
+  glucometers.push(dev);
+  appendGlucometer(dev);
+  dev.connect();
+};
+window.removeGlucometer = function(devid) {
+  disconnectGlucometer(devid);
+  for (let i = 0; i < glucometers.length; i++) {
+    if (glucometers[i].id === devid) {
+      glucometers.splice(i, 1);
+      loadData();
+      return;
+    }
+  }
+};
+window.onDisconnect = function(devid) {
+  let dev = setGlucometerStatus(devid, "Disconnected");
+  if (dev === null) {
+    console.log("Device not found in list");
+    return;
+  }
+  alert("Glucometer disconnected: " + dev.name);
+};
+window.newGlucometer = async function() {
+  console.log("started scan for ble devices");
+  try {
+    await BleClient.initialize({
+      androidNeverForLocation: true
+    });
+    const dev = await BleClient.requestDevice({
+      services: [GLUCONNECT_SERVICE],
+      namePrefix: "Gluconnect"
+    });
+    addGlucometer(dev.deviceId, dev.name, "?");
+    setTimeout(async () => {
+      await BleClient.disconnect(dev.deviceId);
+    }, 5e3);
+  } catch (error) {
+    console.log(error);
+  }
+};
+window.loadData = function() {
+  document.getElementById("glucometerList").innerHTML = "";
+  for (let j = 0; j < glucometers.length; j++) {
+    appendGlucometer(glucometers[j]);
+  }
+  document.getElementById("currentGlucometerCount").innerHTML = glucometers.length;
+};
+window.updateData = function() {
+  loadData();
+  setGlucometers();
 };
 /*! Bundled license information:
 

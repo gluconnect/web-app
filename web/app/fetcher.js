@@ -140,5 +140,13 @@ async function spectatePatient(email, name){
 }
 function logout(){
     sessionStorage.clear();
+    let res = fetch(server.url+"/logout",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email })
+    });
+
     go("login");
 }
