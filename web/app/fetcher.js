@@ -159,6 +159,27 @@ function logout(){
 
     go("login");
 }
+async function newSyncedReading(reading){ // add new reading
+    let res = await fetch(server.url+"/add_reading",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, reading: reading })
+    });
+    if(res.status === 200){
+        data.readings.unshift(reading); // Add the new reading to the front of the list
+        setData();
+        if(loadData){ // If the loadData function is available, call it to update the data on the page
+            loadData(); // Update the data on the page
+        }
+    }else if(res.status === 401){
+        error("Session Expired"); // Notify the frame of the error
+        go("login"); // Redirect to login if session expired
+    }else{
+        error("Failed to add reading"); // Notify the frame of the error
+    }
+}
 async function connectAndGetReadings(){
     if(document.getElementById("redboneImport") === null){ // Check if the script is already loaded
         let elem = document.createElement("script")
@@ -177,7 +198,12 @@ async function connectAndGetReadings(){
             let num_readings = await getNumReadings(dev); // Get the number of readings
                 console.log("Number of Readings: ", num_readings)
             let readingsData = await getReadings(dev, num_readings); // Get the readings from the device
-            console.log("Readings: ", readingsData); // Log the readings to the console
+            console.log(readingsData); // Log the readings to the console
+            for(let i = 0; i < readingsData.length; i++){
+                let reading = readingsData[i]; // Get the reading from the device
+                reading.time = new Date(reading.time); // Set the time of the reading to now
+                newSyncedReading(reading); // Add the new reading to the database
+            }
         }
     } catch (e) {
         console.error("FATAL ERROR: in connectAndGetReadings: ", e);
