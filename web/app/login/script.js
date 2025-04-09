@@ -17,3 +17,4 @@ function error(message){
 }
 // Add event listener to the form submission
 document.getElementById("loginForm").addEventListener("submit", login);
+document.getElementById("server").value = localStorage.getItem("server") || ""; // Set the server URL from local storage if available

@@ -93,7 +93,8 @@ button:hover {
     width: 100%;
     max-height: 90%;
     overflow: auto;
-    margin: 1rem 0;
+    padding: 1rem 0;
+    box-sizing: border-box;
 }
 th{
     width: 20%;
@@ -200,6 +201,7 @@ body{
 }
 *{
     font-family: sans-serif;
+    text-align: center;
 }
 
 #nav {

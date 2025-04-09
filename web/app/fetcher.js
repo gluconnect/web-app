@@ -96,7 +96,7 @@ async function loadSpectate(){
 }
 async function getData(){
     let d = sessionStorage.getItem("data"); // Get the data from session storage
-    if(!server.url)server.url = sessionStorage.getItem("server"); // Get the server URL from session storage
+    if(!server.url)server.url = localStorage.getItem("server"); // Get the server URL from session storage
     if(!server.url)server.url = ""; // Set the server URL to empty string if not available
     if(d){
         data = JSON.parse(d); // Parse the data from JSON
@@ -108,7 +108,7 @@ async function getData(){
 }
 function setData(){
     sessionStorage.setItem("data", JSON.stringify(data)); // Set the data in session storage
-    sessionStorage.setItem("server", server.url); // Set the server URL in session storage
+    localStorage.setItem("server", server.url); // Set the server URL in session storage
 }
 async function getSpectateData(){
     let d = sessionStorage.getItem("spectate"); // Get the spectate data from session storage
@@ -152,13 +152,13 @@ async function spectatePatient(email, name){
 }
 function logout(){
     sessionStorage.clear();
-    let res = fetch(server.url+"/logout",{
+    try{let res = fetch(server.url+"/logout",{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ email: data.creds.email })
-    });
+    });}catch(w){}
 
     go("login");
 }
