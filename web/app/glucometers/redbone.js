@@ -5,7 +5,7 @@ const GET_READING_CHAR = "00002a18-0000-1000-8000-00805f9b34fb"
 const NUM_READING_CHAR = "00002a34-0000-1000-8000-00805f9b34fb"
 
 //returns the device selected by user from list of devices scan
-export async function searchDevices() {
+window.searchDevices = async function() {
     await BleClient.initialize({
         androidNeverForLocation: true
     });
@@ -17,7 +17,7 @@ export async function searchDevices() {
 
     return dev;
 }
-export async function attemptConnect(device){
+window.attemptConnect = async function(device){
     let deviceId = device.deviceId; // get the device id from the glucometer object
     // connect to the device
     await BleClient.connect(deviceId, (deviceId) => onDisconnect(deviceId));
@@ -26,14 +26,7 @@ export async function attemptConnect(device){
 
     alert(await getNumReadings(glucometer));
 }
-export async function disconnectGlucometer(devid) {
-    let dev = setGlucometerStatus(devid, "Disconnected"); // set the status to disconnected
-    if (dev) {
-        await BleClient.disconnect(dev.id); // disconnect the device
-        console.log('disconnected from device', dev.deviceId);
-    }
-}
-export async function getNumReadings(device){
+window.getNumReadings = async function(device){
     let deviceId = device.deviceId; // get the device id from the glucometer object
     // get services from the device
     await BleClient.getServices(deviceId).then((x) => {
@@ -43,7 +36,7 @@ export async function getNumReadings(device){
     const result = await BleClient.read(deviceId, GLUCONNECT_SERVICE, NUM_READING_CHAR);
     return result.getBigUint64(0, true);
 }
-export async function getReadings(device, numReadings){
+window.getReadings = async function(device, numReadings){
     let deviceId = device.deviceId; // get the device id from the glucometer object
     // get services from the device
     await BleClient.getServices(deviceId).then((x) => {
