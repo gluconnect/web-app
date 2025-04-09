@@ -29,12 +29,18 @@ window.getNumReadings = async function(device){
     const result = await BleClient.read(deviceId, GLUCONNECT_SERVICE, NUM_READING_CHAR);
     return result.getBigUint64(0, true);
 }
+function encodeNum(i) {
+    const buffer = new ArrayBuffer(8);
+    const view = new DataView(buffer);
+    view.setBigUint64(0, BigInt(i), true);  // true for little-endian
+    return new Uint8Array(buffer);
+}
 window.getReadings = async function(device, numReadings){
     let deviceId = device.deviceId; // get the device id from the glucometer object
     //loop from 0 to numReadings. For each one, set the get reading char to the value of i and wait for the value. add the value to readings and continue
     let readings = [];
     for(let i = 0; i < numReadings; i++){
-        await BleClient.write(deviceId, GLUCONNECT_SERVICE, GET_READING_CHAR, new Uint8Array([i])); // set the get reading char to the value of i
+        await BleClient.write(deviceId, GLUCONNECT_SERVICE, GET_READING_CHAR, encodeNum(i)); // set the get reading char to the value of i
         const result = await BleClient.read(deviceId, GLUCONNECT_SERVICE, GET_READING_CHAR);
         const decoder = new TextDecoder('utf-8'); // Specify the encoding
         const reading = JSON.parse(decoder.decode(result)); // get the reading from the device
