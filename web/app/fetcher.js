@@ -177,5 +177,4 @@ async function connectAndGetReadings(){
         let readingsData = await getReadings(dev, readings); // Get the readings from the device
         console.log("Readings: "+readingsData); // Log the readings to the console
     }}catch(e){}
-    elem.remove();
 }
