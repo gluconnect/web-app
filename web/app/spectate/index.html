@@ -8,6 +8,12 @@
 <body>
     <div class="app-navbar-notch"></div>
     <div id="content">
+        <button id="cancel" class="cancel" onclick="stopSpectating()">Back</button>
+        <div class="popup">
+            <p>Last Read: <span id="lastRead"></span></p>
+            <button onclick="toggleShowRead()" id="toggleLastRead">Hide Viewed Readings</button>
+            <button onclick="setLastRead()">Mark Current as Read</button>
+        </div>
         <h1>Viewing <span id="username"></span>'s Readings</h1>
         <h2 id="thresholdinfo">No threshold set</h2>
         <h1><span id="threshold"></span></h1>
@@ -32,12 +38,6 @@
                 <!-- Readings will be populated here -->
             </tbody>
         </table>
-        <button id="cancel" class="cancel" onclick="stopSpectating()">Back</button>
-        <div class="popup">
-            <p>Last Read: <span id="lastRead"></span></p>
-            <button onclick="toggleShowRead()" id="toggleLastRead">Hide Viewed Readings</button>
-            <button onclick="setLastRead()">Mark Current as Read</button>
-        </div>
     </div>
 
     <script src="../inject-navbar.js"></script>

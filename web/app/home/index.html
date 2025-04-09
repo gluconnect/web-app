@@ -8,6 +8,10 @@
 <body>
     <div class="app-navbar-notch"></div>
     <div id="content">
+        <div class="popup" id="updateWarningsPopup" style="display: none;">
+            <button onclick="updateWarnings(); this.parentElement.style.display = 'none';">Update Warnings</button>
+            <p>Warn connected viewers of dangerous<br>readings after threshold change</p>
+        </div>
         <h1>Welcome, <span id="username"></span>!</h1>
         <h2 id="thresholdinfo">You do not have a set threshold</h2>
         <h1><span id="threshold"></span></h1>
@@ -18,10 +22,6 @@
             <button onclick="resetSort();sort(2);sort(2);">Show High Readings</button>
         </div>
         <button id="addReading" onclick="addReadingForm()">Add Reading</button>
-        <div class="popup" id="updateWarningsPopup" style="display: none;">
-            <button onclick="updateWarnings(); this.parentElement.style.display = 'none';">Update Warnings</button>
-            <p>Warn connected viewers of dangerous<br>readings after threshold change</p>
-        </div>
         <p id="errorMessage" style="color: red;"></p>
         <table>
             <thead>

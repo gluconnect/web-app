@@ -163,6 +163,9 @@ function logout(){
     go("login");
 }
 async function newSyncedReading(reading){ // add new reading
+    if(data.readings.some(x => reading.time === x.time)){ // Check if the reading already exists in the database
+        return;
+    }
     const bod = JSON.stringify({ email: data.creds.email, password: data.creds.pass, reading: reading })
     console.log("SENDING READING TO SERVER:", bod)
     let res = await fetch(server.url+"/add_reading", {
