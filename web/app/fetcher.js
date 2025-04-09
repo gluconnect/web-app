@@ -196,8 +196,9 @@ async function connectAndGetReadings(){
         if (dev) {
             await attemptConnect(dev);
             let num_readings = await getNumReadings(dev); // Get the number of readings
-                console.log("Number of Readings: ", num_readings)
-            let readingsData = await getReadings(dev, num_readings); // Get the readings from the device
+            num_readings = Math.min(num_readings, 16n)
+            console.log("Number of Readings: ", num_readings)
+            const readingsData = await getReadings(dev, num_readings); // Get the readings from the device
             console.log(readingsData); // Log the readings to the console
             for(let i = 0; i < readingsData.length; i++){
                 let reading = readingsData[i]; // Get the reading from the device
