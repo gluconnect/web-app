@@ -68,7 +68,8 @@ window.addGlucometer = function(devid, name, status) {
 
 //remove the glucometer from the list
 window.removeGlucometer = function(devid) {
-    redbone.disconnectGlucometer(devid); // disconnect the device
+    // redbone.disconnectGlucometer(devid); // disconnect the device
+    redbone.disconnectGlucometer(devid);
     for (let i = 0; i < glucometers.length; i++) {
         if (glucometers[i].id === devid) {
             glucometers.splice(i, 1); // remove the device from the list
@@ -79,14 +80,14 @@ window.removeGlucometer = function(devid) {
 }
 
 window.onDisconnect = function(devid) {
-    let dev = setGlucometerStatus(devid, "Disconnected"); // remove the device from the list
+    // let dev = setGlucometerStatus(devid, "Disconnected"); // remove the device from the list
 
-    if (dev === null) {
-        console.log("Device not found in list");
-        return;
-    }
+    // if (dev === null) {
+    //     // console.log("Device not found in list");
+    //     return;
+    // }
 
-    console.log("[onDisconnect] Glucometer disconnected: " + dev.name);
+    console.log("[onDisconnect] Glucometer disconnected: ", devid);
 }
 
 window.newGlucometer = async function () {
