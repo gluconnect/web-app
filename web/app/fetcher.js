@@ -171,7 +171,7 @@ async function connectAndGetReadings(){
         });
     }
     try {
-            let dev = await searchDevices(); // Search for devices
+        let dev = await searchDevices(); // Search for devices
         if (dev) {
             await attemptConnect(dev);
             let num_readings = await getNumReadings(dev); // Get the number of readings
@@ -179,7 +179,7 @@ async function connectAndGetReadings(){
             let readingsData = await getReadings(dev, num_readings); // Get the readings from the device
             console.log("Readings: ", readingsData); // Log the readings to the console
         }
-        } catch (e) {
-            console.error("FATAL ERROR: in connectAndGetReadings: ", e);
-        }
+    } catch (e) {
+        console.error("FATAL ERROR: in connectAndGetReadings: ", e);
+    }
 }
