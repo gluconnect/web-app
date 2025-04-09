@@ -36,9 +36,10 @@ window.getReadings = async function(device, numReadings){
     for(let i = 0; i < numReadings; i++){
         await BleClient.write(deviceId, GLUCONNECT_SERVICE, GET_READING_CHAR, new Uint8Array([i])); // set the get reading char to the value of i
         const result = await BleClient.read(deviceId, GLUCONNECT_SERVICE, GET_READING_CHAR);
-        // get the reading from the device
-        console.log("Got reading: ", result)
-        readings.push(result); // add the reading to the list of readings
+        const decoder = new TextDecoder('utf-8'); // Specify the encoding
+        const reading = JSON.parse(decoder.decode(result)); // get the reading from the device
+        console.log("Obtained Reading:", reading)
+        readings.push(reading); // add the reading to the list of readings
     }
 
     return readings; // return the list of readings
