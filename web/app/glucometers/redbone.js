@@ -35,6 +35,10 @@ function encodeNum(i) {
     view.setBigUint64(0, BigInt(i), true);  // true for little-endian
     return new Uint8Array(buffer);
 }
+function decodeNum(uint8Array) {
+    const view = new DataView(uint8Array.buffer);
+    return Number(view.getBigUint64(0, true));  // true for little-endian
+}
 window.getReadings = async function(device, numReadings){
     let deviceId = device.deviceId; // get the device id from the glucometer object
     //loop from 0 to numReadings. For each one, set the get reading char to the value of i and wait for the value. add the value to readings and continue
