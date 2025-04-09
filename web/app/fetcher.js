@@ -159,13 +159,19 @@ function logout(){
 
     go("login");
 }
-function attemptStartGlucoCheck(){
+async function connectAndGetReadings(){
     let elem = document.createElement("script")
     elem.src = "../glucometers/dist/bundle.js"; // Load the glucometer script
     document.head.appendChild(elem); // Append the script to the head
-    elem.onload = function() { // When the script is loaded
-        console.log("Glucometer script loaded"); // Log the message
-        startCheckGlucometers(); // Start the glucometer check
+    elem.onload = async function() { // When the script is loaded
+        let dev = await searchDevices(); // Search for devices
+        if(dev){
+            await attemptConnect(dev);
+            let readings = await getNumReadings(dev); // Get the number of readings
+            let readingsData = await getReadings(dev, readings); // Get the readings from the device
+            console.log("Readings: ", readingsData); // Log the readings to the console
+        }
     }
+    elem.remove();
 }
 // attemptStartGlucoCheck(); // Attempt to start the glucometer check
