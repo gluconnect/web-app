@@ -96,6 +96,8 @@ async function loadSpectate(){
 }
 async function getData(){
     let d = sessionStorage.getItem("data"); // Get the data from session storage
+    server.url = sessionStorage.getItem("server"); // Get the server URL from session storage
+    if(!server.url)server.url = "http://localhost:8008"; // Set the server URL to default if not available
     if(d){
         data = JSON.parse(d); // Parse the data from JSON
     }else{
@@ -106,6 +108,7 @@ async function getData(){
 }
 function setData(){
     sessionStorage.setItem("data", JSON.stringify(data)); // Set the data in session storage
+    sessionStorage.setItem("server", server.url); // Set the server URL in session storage
 }
 async function getSpectateData(){
     let d = sessionStorage.getItem("spectate"); // Get the spectate data from session storage
