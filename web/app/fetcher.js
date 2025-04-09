@@ -174,4 +174,3 @@ async function connectAndGetReadings(){
         elem.remove();
     }
 }
-// attemptStartGlucoCheck(); // Attempt to start the glucometer check

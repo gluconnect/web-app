@@ -38,7 +38,7 @@ window.getReadings = async function(device, numReadings){
     //loop from 0 to numReadings. For each one, set the get reading char to the value of i and wait for the value. add the value to readings and continue
     let readings = [];
     for(let i = 0; i < numReadings; i++){
-        await BleClient.write(deviceId, GLUCONNECT_SERVICE, NUM_READING_CHAR, new Uint8Array([i])); // set the get reading char to the value of i
+        await BleClient.write(deviceId, GLUCONNECT_SERVICE, GET_READING_CHAR, new Uint8Array([i])); // set the get reading char to the value of i
         const result = await BleClient.read(deviceId, GLUCONNECT_SERVICE, GET_READING_CHAR);
         const decoder = new TextDecoder('utf-8'); // Specify the encoding
         let reading = JSON.parse(decoder.decode(result)); // get the reading from the device
