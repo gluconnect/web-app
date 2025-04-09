@@ -315,6 +315,20 @@ app.post("/add_reading", checkLogin, (req, res) => {
   }
 });
 
+app.post("/clear_readings", checkLogin, (req, res) => {
+  let user = verifyUser(req);
+  if (!user) {
+    res.sendStatus(401);
+    return;
+  }
+  user.readings = [];
+  for(let v of user.viewers) {
+    let viewer = getUser(v.email)!;
+    viewer.warnings = viewer.warnings.filter((w) => w.email!==user.id); // remove warnings above threshold
+  }
+  res.sendStatus(200);
+});
+
 function updateWarnings(patient: User, notify: boolean){
   let count = 0, latestReading: GlucoReading | null = null;
   for (let reading of patient.readings) {

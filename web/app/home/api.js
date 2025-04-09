@@ -37,6 +37,24 @@ async function newReading(reading){ // add new reading
         error("Failed to add reading"); // Notify the frame of the error
     }
 }
+async function clearReadings(){ // clear readings
+    let res = await fetch(server.url+"/clear_readings",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass })
+    });
+    if(res.status === 200){
+        data.readings = []; // Clear the readings in the data object
+        updateData(); // Update the data in session storage
+    }else if(res.status === 401){
+        error("Session Expired"); // Notify the frame of the error
+        go("login"); // Redirect to login if session expired
+    }else{
+        error("Failed to clear readings"); // Notify the frame of the error
+    }
+}
 async function updateWarnings(){ // warn users new
     let res = await fetch(server.url+"/update_warnings",{
         method: "POST",

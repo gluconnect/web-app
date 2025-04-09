@@ -79,13 +79,18 @@ function appendPatient(patient) {
 // Function to add a new viewer
 // This function creates a form to add a new viewer and appends it to the viewer list
 function addViewerForm() {
+    if(document.getElementById("addViewerForm")){
+        return;
+    }
     // create form to add a new viewer
     let form = document.createElement("form");
     form.innerHTML = `
         <input type="text" id="viewerEmail" placeholder="Viewer Email" required>
         <button type="submit">Add Viewer</button><button type="button" class="cancel" onclick="this.parentElement.remove()">Cancel</button>
     `;
+    form.classList.add("microform");
     form.style.maxWidth = "100%"; // Set max width to 100%
+    form.id = "addViewerForm"; // Set the form ID
     form.onsubmit = async (e) => {
         e.preventDefault();
         let email = document.getElementById("viewerEmail").value;
