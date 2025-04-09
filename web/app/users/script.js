@@ -85,6 +85,7 @@ function addViewerForm() {
         <input type="text" id="viewerEmail" placeholder="Viewer Email" required>
         <button type="submit">Add Viewer</button><button type="button" class="cancel" onclick="this.parentElement.remove()">Cancel</button>
     `;
+    form.style.maxWidth = "100%"; // Set max width to 100%
     form.onsubmit = async (e) => {
         e.preventDefault();
         let email = document.getElementById("viewerEmail").value;
