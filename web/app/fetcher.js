@@ -169,7 +169,7 @@ async function connectAndGetReadings(){
             await attemptConnect(dev);
             let readings = await getNumReadings(dev); // Get the number of readings
             let readingsData = await getReadings(dev, readings); // Get the readings from the device
-            console.log("Readings: ", readingsData); // Log the readings to the console
+            console.log("Readings: "+readingsData); // Log the readings to the console
         }
         // elem.remove();
     }

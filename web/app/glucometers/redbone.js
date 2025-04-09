@@ -21,10 +21,7 @@ window.attemptConnect = async function(device){
     let deviceId = device.deviceId; // get the device id from the glucometer object
     // connect to the device
     await BleClient.connect(deviceId, (deviceId) => onDisconnect(deviceId));
-    glucometer.setStatus("Connected"); // set the status to connected
     console.log('connected to device', deviceId);
-
-    alert(await getNumReadings(glucometer));
 }
 window.getNumReadings = async function(device){
     let deviceId = device.deviceId; // get the device id from the glucometer object
