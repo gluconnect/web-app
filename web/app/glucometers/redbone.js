@@ -17,6 +17,10 @@ window.searchDevices = async function() {
 
     return dev;
 }
+function onDisconnect(devid) {
+    console.log(`[onDisconnect] Disconnect from ${devid}`)
+}
+
 window.attemptConnect = async function(device){
     const deviceId = device.deviceId; // get the device id from the glucometer object
     // connect to the device
