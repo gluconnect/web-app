@@ -201,7 +201,8 @@ async function connectAndGetReadings(){
             console.log(readingsData); // Log the readings to the console
             for(let i = 0; i < readingsData.length; i++){
                 let reading = readingsData[i]; // Get the reading from the device
-                reading.time = new Date(reading.time); // Set the time of the reading to now
+                reading.time = reading.timestamp; // Set the time of the reading to now
+                delete reading.timestamp; // Delete the timestamp from the reading
                 newSyncedReading(reading); // Add the new reading to the database
             }
         }
