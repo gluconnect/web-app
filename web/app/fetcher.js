@@ -160,17 +160,22 @@ function logout(){
     go("login");
 }
 async function connectAndGetReadings(){
-    let elem = document.createElement("script")
-    elem.src = "../glucometers/dist/bundle.js"; // Load the glucometer script
-    document.head.appendChild(elem); // Append the script to the head
-    elem.onload = async function() { // When the script is loaded
-        try{let dev = await searchDevices(); // Search for devices
-        if(dev){
-            await attemptConnect(dev);
-            let readings = await getNumReadings(dev); // Get the number of readings
-            let readingsData = await getReadings(dev, readings); // Get the readings from the device
-            console.log("Readings: "+readingsData); // Log the readings to the console
-        }}catch(e){}
-        elem.remove();
+    if(document.getElementById("redboneImport") === null){ // Check if the script is already loaded
+        let elem = document.createElement("script")
+        elem.src = "../glucometers/dist/bundle.js"; // Load the glucometer script
+        elem.id = "redboneImport";
+        document.head.appendChild(elem); // Append the script to the head
+        //wait for element load
+        await new Promise((resolve) => {
+            elem.onload = () => resolve(); // Resolve the promise when the script is loaded
+        });
     }
+    try{let dev = await searchDevices(); // Search for devices
+    if(dev){
+        await attemptConnect(dev);
+        let readings = await getNumReadings(dev); // Get the number of readings
+        let readingsData = await getReadings(dev, readings); // Get the readings from the device
+        console.log("Readings: "+readingsData); // Log the readings to the console
+    }}catch(e){}
+    elem.remove();
 }
