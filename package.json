@@ -4,7 +4,7 @@
   "exports": "./index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "deno -A npm:esbuild web/app/glucometers/script.js --bundle --outfile=web/app/glucometers/dist/bundle.js --platform=browser --format=esm",
+    "build": "deno -A npm:esbuild web/app/glucometers/redbone.js --bundle --outfile=web/app/glucometers/dist/bundle.js --platform=browser --format=esm",
     "run": "deno -A index.ts",
     "capacitorize": "deno -A npm:@capacitor/cli sync"
   },
