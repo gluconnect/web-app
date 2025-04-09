@@ -204,7 +204,7 @@ async function connectAndGetReadings(){
                 let reading = readingsData[i]; // Get the reading from the device
                 reading.time = reading.timestamp; // Set the time of the reading to now
                 delete reading.timestamp; // Delete the timestamp from the reading
-                newSyncedReading(reading); // Add the new reading to the database
+                await newSyncedReading(reading); // Add the new reading to the database
             }
         }
     } catch (e) {
