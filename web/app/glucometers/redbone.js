@@ -26,9 +26,7 @@ window.attemptConnect = async function(device){
 window.getNumReadings = async function(device){
     let deviceId = device.deviceId; // get the device id from the glucometer object
     // get services from the device
-    await BleClient.getServices(deviceId).then((x) => {
-        console.log("services", x);
-    })
+    await BleClient.getServices(deviceId)
     //actually read the data from the device
     const result = await BleClient.read(deviceId, GLUCONNECT_SERVICE, NUM_READING_CHAR);
     return result.getBigUint64(0, true);
@@ -36,9 +34,7 @@ window.getNumReadings = async function(device){
 window.getReadings = async function(device, numReadings){
     let deviceId = device.deviceId; // get the device id from the glucometer object
     // get services from the device
-    await BleClient.getServices(deviceId).then((x) => {
-        console.log("services", x);
-    })
+    await BleClient.getServices(deviceId)
     //loop from 0 to numReadings. For each one, set the get reading char to the value of i and wait for the value. add the value to readings and continue
     let readings = [];
     for(let i = 0; i < numReadings; i++){

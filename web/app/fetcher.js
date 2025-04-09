@@ -164,14 +164,14 @@ async function connectAndGetReadings(){
     elem.src = "../glucometers/dist/bundle.js"; // Load the glucometer script
     document.head.appendChild(elem); // Append the script to the head
     elem.onload = async function() { // When the script is loaded
-        let dev = await searchDevices(); // Search for devices
+        try{let dev = await searchDevices(); // Search for devices
         if(dev){
             await attemptConnect(dev);
             let readings = await getNumReadings(dev); // Get the number of readings
             let readingsData = await getReadings(dev, readings); // Get the readings from the device
             console.log("Readings: "+readingsData); // Log the readings to the console
-        }
-        // elem.remove();
+        }}catch(e){}
+        elem.remove();
     }
 }
 // attemptStartGlucoCheck(); // Attempt to start the glucometer check
