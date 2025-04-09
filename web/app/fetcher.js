@@ -9,6 +9,7 @@ var checkGlucometersInterval = null; // Interval for checking glucometers
 var shouldHaveSession = false; // sets to true when the user logs in, and false when the user logs out. Also sets to true if server requests credentials
 var server = {
 }
+
 function updateWarningCount(){
     if(data.warnings.length>0){
         document.getElementById("warningCount").parentElement.style.display = "block"; // Show the warning if there are any
@@ -162,12 +163,14 @@ function logout(){
     go("login");
 }
 async function newSyncedReading(reading){ // add new reading
-    let res = await fetch(server.url+"/add_reading",{
+    const bod = JSON.stringify({ email: data.creds.email, password: data.creds.pass, reading: reading })
+    console.log("SENDING READING TO SERVER:", bod)
+    let res = await fetch(server.url+"/add_reading", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email: data.creds.email, password: data.creds.pass, reading: reading })
+        body: bod,
     });
     if(res.status === 200){
         data.readings.unshift(reading); // Add the new reading to the front of the list
@@ -193,7 +196,6 @@ async function connectAndGetReadings(){
             elem.onload = () => resolve(); // Resolve the promise when the script is loaded
         });
     }
-    try {
         let dev = await searchDevices(); // Search for devices
         if (dev) {
             await attemptConnect(dev);
@@ -207,7 +209,4 @@ async function connectAndGetReadings(){
                 await newSyncedReading(reading); // Add the new reading to the database
             }
         }
-    } catch (e) {
-        console.error("FATAL ERROR: in connectAndGetReadings: ", e);
-    }
 }
