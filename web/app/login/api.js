@@ -11,6 +11,7 @@ async function login(username, password, url){
         return;
     }
     // If response is 200, log in is successful
+    console.log(url);
     if(res.status === 200){
         await setCreds({ email: username, pass: password, name: await res.text(), server: url});
         window.location.href = "../home/index.html"; // Redirect to home page

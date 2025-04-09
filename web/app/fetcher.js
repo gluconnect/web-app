@@ -8,7 +8,6 @@ var checkGlucometersCooldown = 5000; // 5 seconds
 var checkGlucometersInterval = null; // Interval for checking glucometers
 var shouldHaveSession = false; // sets to true when the user logs in, and false when the user logs out. Also sets to true if server requests credentials
 var server = {
-    url: "http://localhost:8008" // Server URL
 }
 function updateWarningCount(){
     if(data.warnings.length>0){
@@ -96,8 +95,8 @@ async function loadSpectate(){
 }
 async function getData(){
     let d = sessionStorage.getItem("data"); // Get the data from session storage
-    server.url = sessionStorage.getItem("server"); // Get the server URL from session storage
-    if(!server.url)server.url = "http://localhost:8008"; // Set the server URL to default if not available
+    if(!server.url)server.url = sessionStorage.getItem("server"); // Get the server URL from session storage
+    if(!server.url)server.url = ""; // Set the server URL to empty string if not available
     if(d){
         data = JSON.parse(d); // Parse the data from JSON
     }else{
