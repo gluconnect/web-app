@@ -9,3 +9,7 @@ navbar.innerHTML = `
         <button id="users" onclick="go('users')">Patients and Caretakers<br><span style="display: none;" class="warning"><span id="warningCount">0</span> Warning(s)!</span></button>
         <button id="settings" onclick="go('settings')">Settings</button>`;
 document.body.appendChild(navbar);
+let i = document.createElement("span")
+i.id = "fetchReadingsNotification"
+i.classList.add("popup");
+document.body.prepend(i);

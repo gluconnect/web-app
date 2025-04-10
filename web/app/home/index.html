@@ -23,6 +23,7 @@
         </div>
         <button id="addReading" onclick="addReadingForm()">Add Reading</button>
         <p id="errorMessage" style="color: red;"></p>
+        <p id="fetchReadingsNotification" class="info"></p>
         <table>
             <thead>
                 <tr id="readingsLabels">
@@ -37,6 +38,7 @@
                 <!-- Readings will be populated here -->
             </tbody>
         </table>
+        <button id="fetchReadings" onclick="fetchMoreReadings()">Load More Readings</button>
         <button id="clearReadings" onclick="clearReadings()">Clear Readings</button>
     </div>
 

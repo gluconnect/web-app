@@ -25,6 +25,7 @@ function setThresholdForm(){
         <button type="submit" id="submitthresholdform">Set</button><button id="cancelthresholdform" class="cancel">Cancel</button><button id="removethreshold">Remove Threshold</button>
     `;
     form.classList.add("form");
+    form.classList.add("popupForm");
     document.body.appendChild(form);
     if(data.threshold>=0)document.getElementById("thresholdinput").value = data.threshold;
     form.onsubmit = function() {
@@ -71,6 +72,7 @@ function addReadingForm(){
         <button type="submit" id="submitreadingform">Add Reading</button><button id="cancelreadingform" class="cancel">Cancel</button>
     `;
     form.classList.add("form");
+    form.classList.add("popupForm");
     document.body.appendChild(form);
     form.addEventListener("submit", (function(e) {
         e.preventDefault(); // Prevent default form submission
@@ -160,6 +162,10 @@ function loadData() {
     }
     document.getElementById("readingcount").innerHTML = data.readings.length;
     addReadings(); // Add the readings to the table
+}
+function fetchMoreReadings(){
+    maxReadings*=2;
+    connectAndGetReadings(); // Fetch more readings from the glucometer
 }
 function updateData(){
     loadData();

@@ -4,8 +4,7 @@ var spectate = {
 };
 var glucometers = [
 ];
-var checkGlucometersCooldown = 5000; // 5 seconds
-var checkGlucometersInterval = null; // Interval for checking glucometers
+maxReadings = 16;
 var shouldHaveSession = false; // sets to true when the user logs in, and false when the user logs out. Also sets to true if server requests credentials
 var server = {
 }
@@ -188,6 +187,25 @@ async function newSyncedReading(reading){ // add new reading
         error("Failed to add reading"); // Notify the frame of the error
     }
 }
+function notifyFetchedReadings(n, targ, max = targ){
+    if(n==-1){//glucometer not connected
+        if(max==0)document.getElementById("fetchReadingsNotification").innerHTML = "Connecting to glucometer...";
+        else{
+            document.getElementById("fetchReadingsNotification").innerHTML = "Failed to connect to Glucometer...";
+            setTimeout(()=>document.getElementById("fetchReadingsNotification").innerHTML = "", 3000);
+        }
+    }else if(n===0&&max<0){//glucometer connected
+        document.getElementById("fetchReadingsNotification").innerHTML = "Glucometer connected!";
+    }else if(max===0){//no readings to fetch
+        document.getElementById("fetchReadingsNotification").innerHTML = "Glucometer connected!<br>No readings to fetch!";
+        setTimeout(()=>document.getElementById("fetchReadingsNotification").innerHTML = "", 3000);
+    }else if(n === targ){//continue fetching or done fetching
+        document.getElementById("fetchReadingsNotification").innerHTML = "Glucometer connected!<br>Fetching "+n+" readings of "+max+"!";
+    }else{
+        document.getElementById("fetchReadingsNotification").innerHTML = "Glucometer connected!<br>Fetched "+n+" readings of "+max+"!";
+        setTimeout(()=>document.getElementById("fetchReadingsNotification").innerHTML = "", 3000);
+    }
+}
 async function connectAndGetReadings(){
     if(document.getElementById("redboneImport") === null){ // Check if the script is already loaded
         let elem = document.createElement("script")
@@ -199,17 +217,24 @@ async function connectAndGetReadings(){
             elem.onload = () => resolve(); // Resolve the promise when the script is loaded
         });
     }
+    notifyFetchedReadings(-1, 0); // Notify that the glucometer is not connected
+    try{
         let dev = await searchDevices(); // Search for devices
         if (dev) {
             await attemptConnect(dev);
-            let num_readings = await getNumReadings(dev); // Get the number of readings
-            num_readings = Math.min(Number(num_readings), 16)
+            notifyFetchedReadings(0, -1); // Notify that the glucometer is connected
+            let max_num_readings = await getNumReadings(dev); // Get the number of readings
+            num_readings = Math.min(Number(max_num_readings), maxReadings)
+            notifyFetchedReadings(0, num_readings, max_num_readings); // Notify that the glucometer is connected and the number of readings available
             console.log("Number of Readings: ", num_readings)
             const readingsData = await getReadings(dev, num_readings); // Get the readings from the device
             console.log(readingsData); // Log the readings to the console
             for(let i = 0; i < readingsData.length; i++){
                 let reading = readingsData[i]; // Get the reading from the device
                 await newSyncedReading(reading); // Add the new reading to the database
+                notifyFetchedReadings(i+1, num_readings, max_num_readings); // Notify that the reading has been added
             }
         }
+    }catch(e){}
+    notifyFetchedReadings(-1,-1);
 }

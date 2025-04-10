@@ -25,7 +25,7 @@ html {
     --color-success: darkgreen;
     --color-danger: red;
     --color-warning: lightcoral;
-    --color-info: cyan;
+    --color-info: blue;
 }
 @media (prefers-color-scheme: dark) {
     /* Dark mode styles */
@@ -133,6 +133,13 @@ table{
     top: 0;
     right: 0;*/
 }
+.info{
+    color: var(--color-info);
+    font-weight: bold;
+    /*position: fixed;
+    top: 0;
+    right: 0;*/
+}
 .popup{
     /*position: fixed;
     top: 0;
@@ -156,7 +163,11 @@ form:not(.microform) input, select{
     border-radius: 4px;
     font-size: 30px;
 }
-button[type="submit"]:not(.microform){
+.popupForm {
+    max-height: 90%;
+    overflow: auto;
+}
+.form button[type="submit"]{
     border: none;
     font-size: 30px;
     cursor: pointer;
