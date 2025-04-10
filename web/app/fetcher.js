@@ -102,7 +102,7 @@ async function getData(){
     }else{
         await loadEverything(); // Load everything if data is not available in session storage
     }
-    try{updateWarningCount();}catch(e){} // Update the warning count on the page but idk if navbar exists on the page
+    try{updateWarningCount();}catch(e){console.log(e)} // Update the warning count on the page but idk if navbar exists on the page
     return data; // Return the data object
 }
 function setData(){
